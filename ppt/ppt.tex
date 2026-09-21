@@ -406,24 +406,26 @@ t2 = cong (_+ u) (negl u)
         \item $\Gamma, G \rightarrow G \vdash G$ (replacing occurrences of $\bot$ with G)
     \end{itemize}
     \vfill
-    {\footnotesize $\Gamma$ is a set of definite clauses, $G$ is Goal Atom. \\}
+    {\footnotesize $\Gamma$ is a set of definite clauses, $G$ is ground goal atom. \\}
     {\footnotesize In general $\bot$ may be woven through the entire proof, \\}
     {\footnotesize replacing $\bot$ from top right of tree. \\}
 \end{frame}
 
-\begin{frame}{Lemma}
+\begin{frame}{Lemmas}
     \begin{itemize}
         \item Lemma 1: If Premises are Horn clause, then Conclusion is also Horn.
-        \item Lemma 2: Vampire Core Calculus (Horn version) is intuitionistically valid.
+        \item Lemma 2: Horn Vampire Core Calculus is intuitionistically valid.
         \item Lemma 3: If we have $\bot$ derived from Vampire Core Calculus (Horn version), then ???
     \end{itemize}
+    \vfill
+    {\footnotesize Vampire Core Calculus = VCC, Horn VCC = HVCC \\}
 \end{frame}
 
 \begin{frame}{Vampire Core Calculus (General and Horn Clause)}
     \tiny
     \begin{columns}[T]
       \begin{column}{0.46\textwidth}
-        \centering\scriptsize\textbf{General}
+        \centering\scriptsize\textbf{VCC}
         \begin{mathpar}
           \inferrule*[right=\textsc{Res.}]{A \lor C \quad \neg A' \lor D}{\sigma(C \lor D)}
         \end{mathpar}
@@ -441,7 +443,7 @@ t2 = cong (_+ u) (negl u)
         \end{mathpar}
       \end{column}
       \begin{column}{0.54\textwidth}
-        \centering\scriptsize\textbf{Horn Clause}
+        \centering\scriptsize\textbf{HVCC}
         \begin{mathpar}
           \inferrule*[right=\textsc{Res.}]{\neg P \lor A \quad \neg A' \lor \neg Q \lor \boxed{B}}{\sigma(\neg P \lor \neg Q \lor \boxed{B})}
         \end{mathpar}
@@ -463,13 +465,14 @@ t2 = cong (_+ u) (negl u)
     {\footnotesize P, Q = premises;\; A, B = atoms;\; C, D = clauses;\; \\
      $\mathrm{mgu}(A,A')$, $\mathrm{mgu}(l,l')$, $\mathrm{mgu}(s,t)$ \\ }
     {\footnotesize $\boxed{}$ = positive atom. \\}
+    {\footnotesize P = $A_1 \land A_2 ...$, C = $L_1 \lor L_2 ...$ \\}
 \end{frame}
 
 \begin{frame}{Vampire Core Calculus (Clause and Implication)}
     \tiny
     \begin{columns}[T]
       \begin{column}{0.50\textwidth}
-        \centering\scriptsize\textbf{Clause}
+        \centering\scriptsize\textbf{HVCC}
         \begin{mathpar}
           \inferrule*[right=\textsc{Res.}]{\neg P \lor A \quad \neg A' \lor \neg Q \lor \boxed{B}}{\sigma(\neg P \lor \neg Q \lor \boxed{B})}
         \end{mathpar}
@@ -487,7 +490,7 @@ t2 = cong (_+ u) (negl u)
         \end{mathpar}
       \end{column}
       \begin{column}{0.50\textwidth}
-        \centering\scriptsize\textbf{Implication}
+        \centering\scriptsize\textbf{HVCC$^{Imp}$}
         \begin{mathpar}
           \inferrule*[right=\textsc{Res.}]{P \to A \quad A' \land Q \to \boxed{B}}{\sigma(P \land Q \to \boxed{B})}
         \end{mathpar}
@@ -514,7 +517,7 @@ t2 = cong (_+ u) (negl u)
     \tiny
     \begin{columns}[T]
       \begin{column}{0.46\textwidth}
-        \centering\scriptsize\textbf{Implication}
+        \centering\scriptsize\textbf{HVCC$^{Imp}$}
         \begin{mathpar}
           \inferrule*[right=\textsc{Res.}]{P \to A \quad A' \land Q \to \boxed{B}}{\sigma(P \land Q \to \boxed{B})}
         \end{mathpar}
@@ -602,7 +605,7 @@ t2 = cong (_+ u) (negl u)
 \section{Thesis Proposal}
 \begin{frame}{Thesis Proposal}
     \begin{itemize}
-        \item Formalize superposition calculus (5 Implication rules) by deep embedding.
+        \item Formalize HVCC$^{Imp}$ (5 Implication rules) by deep embedding.
         \item Prove the $\Gamma, G \rightarrow \bot \vdash \bot$, replace $\bot$ by $G$. \\
         (Lemma1, 2, 3) \\
     \end{itemize}
