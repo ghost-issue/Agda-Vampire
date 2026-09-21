@@ -237,14 +237,21 @@ Agda to Vampire is based on \textbf{Agda reflection}. \\
 \begin{Verbatim}[fontsize=\small, frame=single]
 trivial : forall u -> -u + (u + u) = u
 
+t1 : -u + (u + u) = (-u + u) + u
 t1 = sym (assoc (-u) u u)
-   : -u + (u + u) = (-u + u) + u
 
+t2 : (-u + u) + u = ze + u
 t2 = cong (_+ u) (negl u)
-   : (-u + u) + u = ze + u
+   
+ans : -u + (u + u) = u
+ans = trans t1 t2
 \end{Verbatim}
     \vfill
-    Then \texttt{trans t1 t2}, we got the answer.
+    sym : \{A : Set\} \{x y : A\} x $\equiv$ y $\rightarrow$ y $\equiv$ x \\
+    cong : \{A B : Set\} \{x y : A\} (f : A $\rightarrow$ B) $\rightarrow$ x $\equiv$ y $\rightarrow$ f x $\equiv$ f y\\
+    trans : \{A : Set\} \{x y z : A\} x $\equiv$ y $\rightarrow$ y $\equiv$ z $\rightarrow$ x $\equiv$ z \\
+    negl : \{V : Set\} \{u : V\} (- u) + u = ze \\
+    assoc : \{V : Set\} \{u v w : V\} (u + v) + w = u + (v + w) \\
 \end{frame}
 
 \begin{frame}{Contents}
@@ -267,7 +274,9 @@ t2 = cong (_+ u) (negl u)
                          &           & \mid\ \forall x\, \varphi \mid \exists x\, \varphi
     \end{array}
     \]
-    The key point of translation: $P \rightarrow Q \equiv \neg P \lor Q$
+    The key point of translation: $P \rightarrow Q \equiv \neg P \lor Q$ \\
+    Vampire is based on \textbf{refutation proof}. \\
+    (It is likely \textbf{proof by contradiction}.) \\
     \vfill
     %-{\footnotesize Vampire draws distinction between \textbf{terms} and \textbf{formulae}. why? \\}
     %-{\footnotesize Terms are inhabitants of the domain, which are \textbf{non-empty}. \\}
@@ -390,7 +399,7 @@ t2 = cong (_+ u) (negl u)
     \begin{mathpar}
       \inferrule*[right=\textsc{Sup}]{l = r \\ A[l']}{\sigma(A[r])}
     \end{mathpar}
-    \[\sigma = \{\, x \mapsto -x,\; y \mapsto x \,\}\]
+    \textbf{\[\sigma = \{\, x \mapsto -x,\; y \mapsto x \,\}\]}
     \begin{mathpar}
       \inferrule*[right=\textsc{Sup}]{(-x) + x = 0 \\ ((-x) + x) + z = (-x) + (x + z)}{0 + z = (-x) + (x + z)}
     \end{mathpar}
@@ -406,7 +415,7 @@ t2 = cong (_+ u) (negl u)
         \item $\Gamma, G \rightarrow G \vdash G$ (replacing occurrences of $\bot$ with G)
     \end{itemize}
     \vfill
-    {\footnotesize $\Gamma$ is a set of definite clauses, $G$ is ground goal atom. \\}
+    {\footnotesize $\Gamma$ is a set of definite clauses, $G$ is "ground goal atom". \\}
     {\footnotesize In general $\bot$ may be woven through the entire proof, \\}
     {\footnotesize replacing $\bot$ from top right of tree. \\}
 \end{frame}
@@ -414,8 +423,8 @@ t2 = cong (_+ u) (negl u)
 \begin{frame}{Lemmas}
     \begin{itemize}
         \item Lemma 1: If Premises are Horn clause, then Conclusion is also Horn.
-        \item Lemma 2: Horn Vampire Core Calculus is intuitionistically valid.
-        \item Lemma 3: If we have $\bot$ derived from Vampire Core Calculus (Horn version), then ???
+        \item Lemma 2: Horn Vampire Core Calculus(HVCC) is intuitionistically valid.
+        \item Lemma 3 (Redundancy Property) : If we finally derived  $\bot$ from Horn Vampire Core Calculus(HVCC), then ???
     \end{itemize}
     \vfill
     {\footnotesize Vampire Core Calculus = VCC, Horn VCC = HVCC \\}
@@ -465,7 +474,7 @@ t2 = cong (_+ u) (negl u)
     {\footnotesize P, Q = premises;\; A, B = atoms;\; C, D = clauses;\; \\
      $\mathrm{mgu}(A,A')$, $\mathrm{mgu}(l,l')$, $\mathrm{mgu}(s,t)$ \\ }
     {\footnotesize $\boxed{}$ = positive atom. \\}
-    {\footnotesize P = $A_1 \land A_2 ...$, C = $L_1 \lor L_2 ...$ \\}
+    {\footnotesize $\neg$P = $\neg(A_1 \land A_2 ...)$, C = $\neg A_1 \lor \neg A_2 ...$ (Horn and De Morgan) \\}
 \end{frame}
 
 \begin{frame}{Vampire Core Calculus (Clause and Implication)}
@@ -599,7 +608,7 @@ t2 = cong (_+ u) (negl u)
         }{c = c \to \boxed{\bot}}
       }{\boxed{\bot}}
     \end{mathpar}
-    {\footnotesize replace $\boxed{\bot}$ by a = b}
+    {\footnotesize replace each $\boxed{\bot}$ by a = b}
 \end{frame}
 
 \section{Thesis Proposal}
