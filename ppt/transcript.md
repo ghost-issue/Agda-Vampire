@@ -42,8 +42,8 @@
 ## Horn Clause and Notation
 - FOL clause
 - Horn clause
-    1. definite clause
-    2. goal clause
+    1. definite clause: ???
+    2. goal clause: ???
 - (補充)Constructive Valid ???
 ## Vampire Core Calculus (VCC)
 - Resolution: John Robinson 發明出一個 Resolution rule ，希望有一個像是 Hilbert System (many axioms 和 one inference rule)的自動化證明系統。 Intuition idea:???
