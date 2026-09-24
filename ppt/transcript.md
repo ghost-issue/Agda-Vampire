@@ -1,4 +1,6 @@
 # Transcript
+> ... : follow up ppt's content
+
 ## Title
 "When Agda met Vampire" 是一篇2026年的 preprint 的 paper。
 這篇論文主要貢獻是提供 Agda 和 Vampire 之間的轉換。
@@ -15,7 +17,7 @@
 - 可以來看看一個麻煩的例子。
 ## Example 1
 - 左手邊是 Agda code
-- Vector Space (without Scalars)的例子 (group: closed associate, identity), 詳細介紹例子
+- Vector Space (without Scalars)的例子 其實是一個 group (group: closed associate, identity), 詳細介紹例子
 - Translation 基於 Agda reflection
 - Agda reflection 是一種內建於 Agda 的 metaprogramming system
 - 而右手邊是 smtlib format，可以被 Vampire 當作輸入格式
@@ -44,10 +46,10 @@
     2. goal clause
 - (補充)Constructive Valid ???
 ## Vampire Core Calculus (VCC)
-- Resolution:
-- Factoring:
-- Superpostion:
-- Equal Resolution:
+- Resolution: John Robinson 發明出一個 Resolution rule ，希望有一個像是 Hilbert System (many axioms 和 one inference rule)的自動化證明系統。 Intuition idea:???
+- Factoring: Why? Intuition idea:???
+- Superpostion: why? Intuition idea:???
+- Equal Resolution: Why? Intuition idea:???
 - mgu ...
 - "[ ]" 's meaning 
 - footnote
@@ -69,15 +71,23 @@ step 6 : 對 negl 和 assoc 使用 superposition 來得到 step 6 的 theorem。
 我們會限制這兩邊的系統在 Horn Clause 的情況下。
 ...
 ## Lemmas
-- Lemma 1:
+- Lemma 1: ...
 - Lemma 2: Constructive Valid?
 - Lemma 3: ???
 ## VCC and HVCC (Lemma 1)
 左手邊是原本的 VCC，而右手邊是 Horn 版的 VCC
 我可以用 RES 和 SUP 來舉例 Horn 版本的 VCC
-- RES
+- boxed: positive atom
+- RES:
 - SUP: 這邊 Superpostion 分成 left 和 right 的主要原因是因為要把 A[l'] 是作為 Positive 或是 negation 的，所以就分出了兩個 inference rule
 ## HVCC and HVCC$^Imp
-## HVCC and Agda (Propositions as types) (Lemma 2)
+基於前面的 Key Point 和 definite clause 的clause形式和Implication形式，就可以從 HVCC 轉換成 HVCC Imp。
+## HVCC and Agda (Propositions as Types) (Lemma 2)
+這邊我們把 proposition 都轉換成 Agda 上的 type，基於 Propositions as Types and Proof as Program!!，那 Agda 上的程式，就可以把它視作為證明。
+- unification: ???
+- FAC:
+- SUP.L:
 ## Example 2 (Lemma 3)
+...
 ## Thesis Proposal
+...
