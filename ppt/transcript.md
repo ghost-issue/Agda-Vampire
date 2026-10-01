@@ -42,16 +42,15 @@
 ## Horn Clause and Notation
 - FOL clause
 - Horn clause
-    1. definite clause: ???
-    2. goal clause: ???
-- (補充)Constructive Valid ???
+    1. definite clause
+    2. goal clause
 ## Vampire Core Calculus (VCC)
-- Resolution: John Robinson 發明出一個 Resolution rule ，希望有一個像是 Hilbert System (many axioms 和 one inference rule)的自動化證明系統。 Intuition idea:???
-- Factoring: Why? Intuition idea:???
-- Superpostion: why? Intuition idea:???
-- Equal Resolution: Why? Intuition idea:???
-- mgu ...
-- "[ ]" 's meaning 
+John Robinson 發明出一個 Resolution (Resolution rule and Factoring rule)，希望有一個像是 Hilbert System (many axioms 和 one inference rule)的自動化證明系統。 
+- Resolution and Factoring: Resolution on ground clauses is a version of the cut rule restricted to atomic formulas, whereas factoring is an instance of contraction. In fact, the refutational completeness of resolution can be derived from the completeness of the (propositional) sequent calculus (Resolution input 2 clause, Factoring input 1 clause)
+- Superpostion: Resolutino + Equality = Paramodulation rule, and Superposition is a part of Order Paramodulation.
+- Equal Resolution: Just like Factoring, working with Superposition.
+- mgu
+- "A[l']": 是帶有 l' 的 atomic
 - footnote
 ## Example 1
 下面是 Vampire 找到的證明，而上面是整理下面的證明後的易讀版本
@@ -65,28 +64,27 @@
 step 6 : 對 negl 和 assoc 使用 superposition 來得到 step 6 的 theorem。
 - negl: left hand side of sup
 - assoc: right hand side of sup
-- unification: ???
+- unification: 對著 l 和 l' 做 unify，讓 l' 可以 rewrite 成 r 
 ## A classical proof to intuitionistic proof
 接下來會介紹最重要的部分是 從 Vampire 到 Agda, 從 Classical 到 Intuitionistic
 我們會限制這兩邊的系統在 Horn Clause 的情況下。
 ...
 ## Lemmas
 - Lemma 1: ...
-- Lemma 2: Constructive Valid?
+- Lemma 2: Constructive Valid, reference to Dale Miller's Uniform proofs, first-order horn clause(fohc) is even minimal valid.
 - Lemma 3: ???
 ## VCC and HVCC (Lemma 1)
 左手邊是原本的 VCC，而右手邊是 Horn 版的 VCC
 我可以用 RES 和 SUP 來舉例 Horn 版本的 VCC
 - boxed: positive atom
-- RES:
+- RES
 - SUP: 這邊 Superpostion 分成 left 和 right 的主要原因是因為要把 A[l'] 是作為 Positive 或是 negation 的，所以就分出了兩個 inference rule
 ## HVCC and HVCC$^Imp
 基於前面的 Key Point 和 definite clause 的clause形式和Implication形式，就可以從 HVCC 轉換成 HVCC Imp。
 ## HVCC and Agda (Propositions as Types) (Lemma 2)
 這邊我們把 proposition 都轉換成 Agda 上的 type，基於 Propositions as Types and Proof as Program!!，那 Agda 上的程式，就可以把它視作為證明。
-- unification: ???
-- FAC:
-- SUP.L:
+- FAC: mgu(A, A'), 所以把 Ａ 和 A' 當作同一個 type
+- SUP.L: ...
 ## Example 2 (Lemma 3)
 ...
 ## Thesis Proposal
