@@ -46,7 +46,7 @@
     2. goal clause
 ## Vampire Core Calculus (VCC)
 John Robinson 發明出一個 Resolution (Resolution rule and Factoring rule)，希望有一個像是 Hilbert System (many axioms 和 one inference rule)的自動化證明系統。 
-- Resolution and Factoring: Resolution on ground clauses is a version of the cut rule restricted to atomic formulas, whereas factoring is an instance of contraction. In fact, the refutational completeness of resolution can be derived from the completeness of the (propositional) sequent calculus (Resolution input 2 clause, Factoring input 1 clause)
+- Resolution and Factoring: Resolution on ground clauses is a version of the cut rule restricted to atomic formulas, whereas factoring is an instance of contraction. In fact, the refutational completeness of resolution can be derived from the completeness of the (propositional) sequent calculus (Resolution(eliminate clause) input 2 clause, Factoring(eliminate literal) input 1 clause)
 - Superpostion: Resolutino + Equality = Paramodulation rule, and Superposition is a part of Order Paramodulation.
 - Equal Resolution: Just like Factoring, working with Superposition.
 - mgu
