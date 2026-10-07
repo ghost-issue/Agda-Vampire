@@ -25,7 +25,8 @@
   \usepackage{lmodern}
 \else
   \usepackage{fontspec}
-  \defaultfontfeatures{Ligatures=TeX}
+  % not \ttfamily: TeX ligatures there turn ' into a curly quote in code
+  \defaultfontfeatures[\rmfamily,\sffamily]{Ligatures=TeX}
   \setsansfont{texgyreheros}[         % beamer typesets slides with this one
     Extension      = .otf,
     UprightFont    = *-regular,
@@ -130,6 +131,12 @@
 \newcommand{\Tt}{\mathsf{T}}   % signed-tableau "true"
 \newcommand{\Ff}{\mathsf{F}}   % signed-tableau "false"
 \newcommand{\hi}[1]{\textcolor{accentorange}{\textbf{#1}}}  % inline highlight
+% Code blocks (Verbatim with commandchars=\\\{\}): TeX Gyre Cursor has no
+% forall glyph, so borrow the math symbols, boxed to one cell (\vforall) and
+% two cells (\vto, as wide as ->) so columns stay aligned.  Write \vforall{}x
+% when a letter follows directly.
+\newcommand{\vforall}{\makebox[\fontcharwd\font`x]{$\forall$}}
+\newcommand{\vto}{\makebox[2\fontcharwd\font`x]{$\to$}}
 
 % --- SectionGenerator -------------------------------------------------------
 \newbool{skipsectionpage}
@@ -212,21 +219,21 @@
 postulate
   V   : Set                          \textcolor{gray}{-- (declare-sort V 0)}
   ze  : V                            \textcolor{gray}{-- (declare-const ze V)}
-  _+_ : V -> V -> V                  \textcolor{gray}{-- (declare-fun _+_ (V V) V)}
-  -_  : V -> V                       \textcolor{gray}{-- (declare-fun -_ (V) V)}
+  _+_ : V \vto V \vto V                  \textcolor{gray}{-- (declare-fun _+_ (V V) V)}
+  -_  : V \vto V                       \textcolor{gray}{-- (declare-fun -_ (V) V)}
 
-  neutl : forall u -> ze + u = u     \textcolor{gray}{-- (assert (! (forall ((u V))}
+  neutl : \vforall u \vto ze + u = u          \textcolor{gray}{-- (assert (! (forall ((u V))}
                                      \textcolor{gray}{--   (= (_+_ ze u) u)) :named neutl))}
-  negl  : forall u -> (- u) + u = ze \textcolor{gray}{-- (assert (! (forall ((u V))}
+  negl  : \vforall u \vto (- u) + u = ze      \textcolor{gray}{-- (assert (! (forall ((u V))}
                                      \textcolor{gray}{--   (= (_+_ (-_ u) u) ze))}
                                      \textcolor{gray}{--   :named negl))}
-  assoc : forall u v w ->            \textcolor{gray}{-- (assert (! (forall ((u V)(v V)(w V))}
+  assoc : \vforall u v w \vto                 \textcolor{gray}{-- (assert (! (forall ((u V)(v V)(w V))}
     (u + v) + w = u + (v + w)        \textcolor{gray}{--   (= (_+_ (_+_ u v) w)}
                                      \textcolor{gray}{--      (_+_ u (_+_ v w)))) :named assoc))}
                                      \textcolor{gray}{-- (declare-const u V)}
                                      \textcolor{gray}{-- (declare-const v V)}
-ze-uniq' : forall u v ->             \textcolor{gray}{-- (assert (! (forall ()}
-  u + v = v -> u = ze                \textcolor{gray}{--   (= (_+_ u v) v)) :named e))}
+ze-uniq' : \vforall u v \vto                  \textcolor{gray}{-- (assert (! (forall ()}
+  u + v = v \vto u = ze                \textcolor{gray}{--   (= (_+_ u v) v)) :named e))}
                                      \textcolor{gray}{-- (assert-not (! (= u ze) :named ze-uniq))}
 \end{Verbatim}
 Agda to Vampire is based on \textbf{Agda reflection}. \\
@@ -234,25 +241,23 @@ Agda to Vampire is based on \textbf{Agda reflection}. \\
 \end{frame}
 
 \begin{frame}[fragile]{A Little Taste of Agda}
-\begin{Verbatim}[fontsize=\small, frame=single]
-trivial : forall u -> -u + (u + u) = u
+\begin{Verbatim}[fontsize=\footnotesize, frame=single, commandchars=\\\{\}]
+trivial : \vforall u \vto (- u) + (u + u) = u
+trivial u = trans (trans t1 t2) (neutl u)
+  where
+  t1 : (- u) + (u + u) = ((- u) + u) + u
+  t1 = sym (assoc (- u) u u)
 
-t1 : -u + (u + u) = (-u + u) + u
-t1 = sym (assoc (-u) u u)
-
-t2 : (-u + u) + u = ze + u
-t2 = cong (_+ u) (negl u)
-   
-ans : -u + (u + u) = u
-ans = trans (trans t1 t2) (neutl u)
+  t2 : ((- u) + u) + u = ze + u
+  t2 = cong (_+ u) (negl u)
 \end{Verbatim}
     \vfill
-    sym : \{x y : A\} x = y $\rightarrow$ y = x \\
-    cong : \{x y : A\} (f : A $\rightarrow$ B) $\rightarrow$ x = y $\rightarrow$ f x = f y\\
-    trans : \{x y z : A\} x = y $\rightarrow$ y = z $\rightarrow$ x = z \\
-    neutl : (u : V) $\rightarrow$ ze + u = u \\
-    negl : (u : V) $\rightarrow$ (- u) + u = ze \\
-    assoc : (u v w : V) $\rightarrow$ (u + v) + w = u + (v + w) \\
+    {\footnotesize $\mathsf{sym} : \{x\;y : A\} \to x = y \to y = x$ \\}
+    {\footnotesize $\mathsf{cong} : \{x\;y : A\} \to (f : A \to B) \to x = y \to f\,x = f\,y$ \\}
+    {\footnotesize $\mathsf{trans} : \{x\;y\;z : A\} \to x = y \to y = z \to x = z$ \\}
+    {\footnotesize $\mathsf{neutl} : \forall u \to \mathsf{ze} + u = u$ \\}
+    {\footnotesize $\mathsf{negl} : \forall u \to (-u) + u = \mathsf{ze}$ \\}
+    {\footnotesize $\mathsf{assoc} : \forall u\;v\;w \to (u + v) + w = u + (v + w)$ \\}
 \end{frame}
 
 \begin{frame}{Contents}
@@ -261,16 +266,16 @@ ans = trans (trans t1 t2) (neutl u)
 
 \section{Classical FOL}
 \begin{frame}{Classical FOL}
-    x y z as individual variable.
+    $x$, $y$, $z$ as individual variable.
     \medskip
     \[
     \begin{array}{r@{\;\;}c@{\;\;}l}
-        \mathit{term}    & \Coloneqq & x \mid c \mid f(\mathit{term}, \dots, \mathit{term}) \\[6pt]
-        \mathit{atom}    & \Coloneqq & P(\mathit{term}, \dots, \mathit{term})
-                                       \mid \mathit{term} = \mathit{term}
+        \textit{term}    & \Coloneqq & x \mid c \mid f(\textit{term}, \dots, \textit{term}) \\[6pt]
+        \textit{atom}    & \Coloneqq & P(\textit{term}, \dots, \textit{term})
+                                       \mid \textit{term} = \textit{term}
                                        \mid \top \mid \bot \\[6pt]
-        \mathit{literal} & \Coloneqq & \mathit{atom} \mid \neg\, \mathit{atom} \\[6pt]
-        \varphi          & \Coloneqq & \mathit{literal} \mid \neg\varphi \mid \varphi \land \varphi \mid \varphi \lor \varphi \\[2pt]
+        \textit{literal} & \Coloneqq & \textit{atom} \mid \neg\, \textit{atom} \\[6pt]
+        \varphi          & \Coloneqq & \textit{literal} \mid \neg\varphi \mid \varphi \land \varphi \mid \varphi \lor \varphi \\[2pt]
                          &           & \mid\ \varphi \to \varphi \mid \varphi \leftrightarrow \varphi \\[2pt]
                          &           & \mid\ \forall x\, \varphi \mid \exists x\, \varphi
     \end{array}
@@ -291,22 +296,22 @@ ans = trans (trans t1 t2) (neutl u)
     \begin{itemize}
       \item \textbf{Horn clause}: 0 or 1 positive ``head'' literals
       \begin{itemize}
-          \item $\forall x y ...$ $L_1 \lor L_2 \lor ...$ 
+          \item $\forall x_1 \dots x_k.\;$ $L_1 \lor L_2 \lor \cdots$ 
       \end{itemize}
       \item \textbf{definite clause}: exactly 1 positive literal
       \begin{itemize}
-          \item $\forall x y ...$ $\neg A_1 \lor \neg A_2 \lor ... \lor B$ 
-          \item $\forall x y ...$ $A_1 \land A_2 \land ... \rightarrow B$
+          \item $\forall x_1 \dots x_k.\;$ $\neg A_1 \lor \neg A_2 \lor \cdots \lor B$ 
+          \item $\forall x_1 \dots x_k.\;$ $A_1 \land A_2 \land \cdots \rightarrow B$
       \end{itemize}
       \item \textbf{goal clause}: exactly 0 positive literals
       \begin{itemize}
-          \item $\forall x y ...$ $\neg A_1 \lor \neg A_2 \lor ... \lor \neg A_n$ 
-          \item $\forall x y ...$ $A_1 \land A_2 \land ... \land A_n \rightarrow \bot$
+          \item $\forall x_1 \dots x_k.\;$ $\neg A_1 \lor \neg A_2 \lor \cdots \lor \neg A_n$ 
+          \item $\forall x_1 \dots x_k.\;$ $A_1 \land A_2 \land \cdots \land A_n \rightarrow \bot$
       \end{itemize}
     \end{itemize}
     \vfill
     {\footnotesize each $L_i$ are Literal and each $A_i$ and $B$ are Atom. \\}
-    {\footnotesize equations s = t are treated as implicitly symmetric. \\}
+    {\footnotesize equations $s = t$ are treated as implicitly symmetric. \\}
 \end{frame}
 
 \section{Vampire Core Calculus}
@@ -324,10 +329,10 @@ ans = trans (trans t1 t2) (neutl u)
         \inferrule*[right=\textsc{Eq.\ Resolution}]{s \neq t \lor C}{\sigma(C)}
     \end{mathpar}
     \vfill
-    {\footnotesize $\sigma: Var \rightarrow Term$\\ }
-    {\footnotesize $\mathrm{mgu}(A, A')$ in Resolution and Factoring. \\}
-    {\footnotesize $\mathrm{mgu}(l, l')$ in Superposition. \\}
-    {\footnotesize $\mathrm{mgu}(s, t)$ in Equality Resolution. \\}
+    {\footnotesize $\sigma : \textit{Var} \rightarrow \textit{Term}$\\ }
+    {\footnotesize $\mathsf{mgu}(A, A')$ in Resolution and Factoring. \\}
+    {\footnotesize $\mathsf{mgu}(l, l')$ in Superposition. \\}
+    {\footnotesize $\mathsf{mgu}(s, t)$ in Equality Resolution. \\}
     {\footnotesize $A$, $A[l']$ are atoms. \\}
     {\footnotesize $C$, $D$ are clauses. \\}
     {\footnotesize $l$, $l'$, $r$, $s$, $t$ are terms. \\}
@@ -353,20 +358,20 @@ ans = trans (trans t1 t2) (neutl u)
 
 \begin{frame}[fragile]{Example 1 (Vector Spaces)}
 \begin{Verbatim}[fontsize=\fontsize{5}{6}\selectfont, frame=single, commandchars=\\\{\}]
- 1. forall x. 0 + x = x  (neutl)
- 2. forall x. (-x) + x = 0  (negl)
- 3. forall xyz. (x+y)+z = x+(y+z)  (assoc)
+ 1. \vforall{}x. ze + x = x  (neutl)
+ 2. \vforall{}x. (-x) + x = ze  (negl)
+ 3. \vforall{}x y z. (x + y) + z = x + (y + z)  (assoc)
  4. v = u + v  (e)
- 5. 0 != u  (negated goal)
- 6. forall xy. -x+(x+y) = 0+y  (superposition 3, 2)
- 7. forall x. v+x = u+(v+x)  (superposition 3, 4)
- 8. forall xy. -x+(x+y) = y  (superposition 6, 1)
- 9. forall x. (--x)+0 = x  (superposition 8, 2)
-10. forall xy. y+x = (--y)+x  (superposition 8, 8)
-11. forall x. x+0 = x  (superposition 9, 10)
-12. forall x. 0 = x+(-x)  (superposition 2, 10)
-13. 0 = u+0  (superposition 7, 12)
-14. 0 = u  (superposition 13, 11)
+ 5. ze != u  (negated goal)
+ 6. \vforall{}x y. (-x) + (x + y) = ze + y  (superposition 3, 2)
+ 7. \vforall{}x. v + x = u + (v + x)  (superposition 3, 4)
+ 8. \vforall{}x y. (-x) + (x + y) = y  (superposition 6, 1)
+ 9. \vforall{}x. (-(-x)) + ze = x  (superposition 8, 2)
+10. \vforall{}x y. y + x = (-(-y)) + x  (superposition 8, 8)
+11. \vforall{}x. x + ze = x  (superposition 9, 10)
+12. \vforall{}x. ze = x + (-x)  (superposition 2, 10)
+13. ze = u + ze  (superposition 7, 12)
+14. ze = u  (superposition 13, 11)
 15. false  (resolution 14, 5)
 
 \textcolor{gray}{-- Vampire Original Output}
@@ -392,18 +397,18 @@ ans = trans (trans t1 t2) (neutl u)
     \footnotesize
     \begin{center}
     $\begin{array}{r@{\quad}l@{\qquad}l}
-      2 & \forall x.\; (-x) + x = 0                  & (l = r)\\[3pt]
+      2 & \forall x.\; (-x) + x = \mathsf{ze}        & (l = r)\\[3pt]
       3 & \forall x\,y\,z.\; (x+y)+z = x+(y+z)       & (A[l'])
     \end{array}$
     \end{center}
     \vspace{4pt}
-    \textbf{Sup 3, 2}
+    \textbf{Sup. 3, 2}
     \begin{mathpar}
-      \inferrule*[right=\textsc{Sup}]{l = r \\ A[l']}{\sigma(A[r])}
+      \inferrule*[right=\textsc{Sup.}]{l = r \\ A[l']}{\sigma(A[r])}
     \end{mathpar}
-    \textbf{\[\sigma = \{\, x \mapsto -x,\; y \mapsto x \,\}\]}
+    \[\sigma = \{\, x \mapsto -x,\; y \mapsto x \,\}\]
     \begin{mathpar}
-      \inferrule*[right=\textsc{Sup}]{(-x) + x = 0 \\ ((-x) + x) + z = (-x) + (x + z)}{0 + z = (-x) + (x + z)}
+      \inferrule*[right=\textsc{Sup.}]{(-x) + x = \mathsf{ze} \\ ((-x) + x) + z = (-x) + (x + z)}{\mathsf{ze} + z = (-x) + (x + z)}
     \end{mathpar}
 \end{frame}
 
@@ -415,7 +420,7 @@ ans = trans (trans t1 t2) (neutl u)
     \begin{itemize}
         \item $\Gamma, \neg G \vdash \bot$ 
         \item $\Gamma, G \rightarrow \bot \vdash \bot$ 
-        \item $\Gamma, G \rightarrow G \vdash G$ (replacing occurrences of $\bot$ with G)
+        \item $\Gamma, G \rightarrow G \vdash G$ (replacing occurrences of $\bot$ with $G$)
     \end{itemize}
     \vfill
     {\footnotesize $\Gamma$ is ``a set of definite clauses'', $G$ is ``ground goal atom''. \\}
@@ -427,7 +432,7 @@ ans = trans (trans t1 t2) (neutl u)
     \begin{itemize}
         \item Lemma 1: For every VCC rule, if its premises are Horn, then its conclusion is also Horn. \\
         (Translate Horn Clause to Horn Implication.)
-        \item Lemma 2: Horn Vampire Core Calculus(HVCC) is intuitionistically valid. \\
+        \item Lemma 2: Horn Vampire Core Calculus (HVCC) is intuitionistically valid. \\
         \item Lemma 3: Let $\Gamma$ be definite clauses and \textbf{$G$ be a ground atom.}
         If $\Gamma, G \rightarrow \bot \vdash \bot$ is derivable in HVCC, then $\Gamma, G \rightarrow G \vdash G$ is also derivable in HVCC.
     \end{itemize}
@@ -476,10 +481,10 @@ ans = trans (trans t1 t2) (neutl u)
       \end{column}
     \end{columns}
     \vfill
-    {\footnotesize P, Q = premises;\; A, B = atoms;\; C, D = clauses;\; \\
-     $\mathrm{mgu}(A,A')$, $\mathrm{mgu}(l,l')$, $\mathrm{mgu}(s,t)$ \\ }
+    {\footnotesize $P$, $Q$ = premises;\; $A$, $B$ = atoms;\; $C$, $D$ = clauses;\; \\
+     $\mathsf{mgu}(A,A')$, $\mathsf{mgu}(l,l')$, $\mathsf{mgu}(s,t)$ \\ }
     {\footnotesize $\boxed{}$ = positive atom. \\}
-    {\footnotesize $\neg$P = $\neg(A_1 \land A_2 ...)$, C = $\neg A_1 \lor \neg A_2 ...$ (Horn and De Morgan) \\}
+    {\footnotesize $\neg P = \neg(A_1 \land A_2 \land \cdots)$, $C = \neg A_1 \lor \neg A_2 \lor \cdots$ (Horn and De Morgan) \\}
 \end{frame}
 
 \begin{frame}{Horn Vampire Core Calculus (HVCC)}
@@ -523,13 +528,13 @@ ans = trans (trans t1 t2) (neutl u)
       \end{column}
     \end{columns}
     \vfill
-    {\footnotesize P, Q = premises;\; A, B = atoms;\;
-     $\mathrm{mgu}(A,A')$, $\mathrm{mgu}(l,l')$, $\mathrm{mgu}(s,t)$ \\}
-    {\footnotesize definite clause: $\neg A_1 \lor \neg A_2 \lor ... \lor B$ $\Longrightarrow$
-                                    $A_1 \land A_2 \land ... \rightarrow B$ \\}
+    {\footnotesize $P$, $Q$ = premises;\; $A$, $B$ = atoms;\;
+     $\mathsf{mgu}(A,A')$, $\mathsf{mgu}(l,l')$, $\mathsf{mgu}(s,t)$ \\}
+    {\footnotesize definite clause: $\neg A_1 \lor \neg A_2 \lor \cdots \lor B$ $\Longrightarrow$
+                                    $A_1 \land A_2 \land \cdots \rightarrow B$ \\}
     {\footnotesize goal clause: 
-          $\neg A_1 \lor \neg A_2 \lor ... \lor \neg A_n$ $\Longrightarrow$
-          $A_1 \land A_2 \land ... \land A_n \rightarrow \bot$ \\}
+          $\neg A_1 \lor \neg A_2 \lor \cdots \lor \neg A_n$ $\Longrightarrow$
+          $A_1 \land A_2 \land \cdots \land A_n \rightarrow \bot$ \\}
 \end{frame}
 
 \begin{frame}{Proof of Lemma 2}
@@ -570,7 +575,7 @@ ans = trans (trans t1 t2) (neutl u)
           \inferrule*[right=\textsc{Sup.L}]{t_1 : P \to l = r \quad t_2 : A[l] \land Q \to B}{(\lambda (p,a,q).\; t_2\; ((\mathsf{subst}\; (\mathsf{sym}\; (t_1\; p))\; a), q)) \\\\ : P \land A[r] \land Q \to B}
         \end{mathpar}
         \begin{mathpar}
-          \inferrule*[right=\textsc{Sup.R}]{t_1 : P \to l = r \quad t_2 : Q \to A[l]}{(\lambda pq.\; \mathsf{subst}\; (t_1\; p)\; (t_2\; q)) : P \land Q \to A[r]}
+          \inferrule*[right=\textsc{Sup.R}]{t_1 : P \to l = r \quad t_2 : Q \to A[l]}{(\lambda (p,q).\; \mathsf{subst}\; (t_1\; p)\; (t_2\; q)) : P \land Q \to A[r]}
         \end{mathpar}
       \end{column}
     \end{columns}
@@ -637,10 +642,10 @@ ans = trans (trans t1 t2) (neutl u)
 \begin{frame}{References}
     \scriptsize
     \begin{itemize}
-        \item Artjoms Šinkarovs and Michael Rawson. ``When Agda Met Vampire.''
-        \item Laura Kovács and Andrei Voronkov.  "Vampire Guide Lectures."
-        \item Giles Reger. "The Vampire Journey. (Youtube)"
-        \item Alan J.A. Robinson, Andrei Voronkov. "Paramodulation-Based Theorem Proving"
+        \item Artjoms Šinkarovs and Michael Rawson. ``When Agda met Vampire.''
+        \item Laura Kovács and Andrei Voronkov.  ``Vampire Guide Lectures.''
+        \item Giles Reger. ``The Vampire Journey. (Youtube)''
+        \item Alan J.A. Robinson, Andrei Voronkov. ``Paramodulation-Based Theorem Proving''
     \end{itemize}
 \end{frame}
 
