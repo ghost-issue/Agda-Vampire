@@ -1,10 +1,10 @@
 # Transcript
-> ... : follow up ppt's content
+> ... : following up ppt's content
 
 ## Title
 "When Agda met Vampire" 是一篇2026年的 preprint 的 paper。
 這篇論文主要貢獻是提供 Agda 和 Vampire 之間的轉換。
-而我的 Thesis Proposal 是從這篇轉換去做延伸。
+而我的 Thesis Proposal 是從這篇論文去做延伸。
 ## Background
 - ATP
 - ITP
@@ -15,11 +15,11 @@
 - ATP 和 ITP 的結合, tactics and Hammer
 - 接下來看論文主要的架構
 ## Motivation
-- 雙方可以得到的好處:
+- 雙方都可以得到的好處:
     - Agda: 有好的自動證明
     - Vampire: 能更確認他的輸出的證明是正確的
 - 所以這張圖片給了我們這篇論文的核心運作原理：
-1. 首先看下面的這個箭頭，我們會從一段 agda 程式開始，把 Agda 的程式翻譯成 Vampire。
+1. 首先看下面的這個箭頭，我們會從一段 agda 程式開始，把 Agda 的程式翻譯成 Vampire 的輸入格式。
 2. 轉換完成後，讓 Vampire 基於這些 Axioms, Theorems 和 conjecture，來自動找出證明。
 3. 再來就是把 Vampire 最終的輸出 (證明過程)，轉換成 Agda 的程式，這也會是我的 Thesis Proposal 主要要做的部分
 4. 最後產生出來的 Agda program 在經由 agda typechecking 來做驗證來確保 Vampire 最終輸出證明的正確性。
@@ -46,17 +46,17 @@
 trivial 就是我們想要證明的目標，一個 negative vector 加上 兩個 positive vectors 等於 一個 positve vector。
 - t1: 從上面的 type 上我們可以看到，我們對左手邊的公式的括號，由右往左移動，使用到 assoc -u u u，在對它做 sym 就得到了這個公式
 - t2: 一樣看到左手邊的這個括號等於 zero vector，所以我們會對右手邊的這個 + u，做 cong (negl)
-- ans: 在基於 transive rule 來把 t1 和 t2 接起來，在 trans 前面這一塊和 neutl u
+- trivial u: 在基於 transive rule 來把 t1 和 t2 接起來，在 trans 前面這一塊和 neutl u
 ## Contents
-我前面介紹完了動機與背景知識，前面介紹的內容就是動機裡面下面的箭頭，從Agda 到 Vampire 的過程。而我們接下來會看到剩下的三個步驟，是如何進行的。
-- Classical FOL: 因為前面提到 ATP 都是基於 Classical FOL，來做自動證明，所以我會介紹到 ATP 所需要的內容。
-- Vampire Core Calculus: 再來會介紹到 Vampire Core Calculus，來理解 Vampire 內部是如何自動找出證明的
-- Vampire to Agda 的流程就是對應到前面那張圖片上面的箭頭，也會是我的 Thesis Proposal 主要關注的重點，如何從 Classical 到 Intuitionistic
+我前面介紹完了動機與背景知識，前面介紹的內容就是動機裡面下面的箭頭，從Agda 到 Vampire 的過程。而我們接下來會看到剩下的兩個步驟，是如何進行的。 最後一步 type checking 就不是我們這次會介紹到的範圍。
+- Classical FOL: 因為前面提到 ATP 都是基於 Classical FOL，來做自動證明，所以我會介紹到 ATP 所需要的內容。 (Vampire search a proof)
+- Vampire Core Calculus: 再來會介紹到 Vampire Core Calculus，來理解 Vampire 內部是如何自動找出證明的 (Vampire search a proof)
+- Vampire to Agda 的流程就是對應到前面那張圖片上面的箭頭，也會是我的 Thesis Proposal 主要關注的重點，如何從 Classical 到 Intuitionistic (Translate)
 - Thesis Proposal
 ## Classical FOL
 - term
 - atom: 特別把 equality 這個 predicate 拿出來，是因為很大一部分的證明是找出兩個 term 的等價關係。就像是我會使用 equality reasoning 的方式去證明。
-- literal: 為什麼要特別提出 literal 這個 terminology 來描述 atom 呢？ 因為 ATP 使用 classical proof 的方式去證明程式。且自動化證明也會經過預處理的方式，轉成 Conjunction Normal Form (Clause Normal Form)，而在轉乘 CNF 前會先轉換成 Negation Normal Form，NNF 就是把所有的 negation 移到 atom 旁邊。
+- literal: 為什麼要特別提出 literal 這個 terminology 來描述 atom 呢？ 因為 ATP 使用 classical proof 的方式去證明程式。且自動化證明也會經過預處理的方式，轉成 Conjunction Normal Form (Clause Normal Form)，而在轉成 CNF 前會先轉換成 Negation Normal Form，NNF 就是把所有的 negation 移到 atom 旁邊。
 - formula
 - Key point
 - Refutation Proof
@@ -66,13 +66,20 @@ trivial 就是我們想要證明的目標，一個 negative vector 加上 兩個
     1. definite clause: 基於 logic programming 的方式來證明(head :- body)，直觀的理解，就是由一堆前提推出一個結論
     2. goal clause: 因為 refutation proof 的關係，所以需要把 goal 做 negation，就會的得到下面這個形式。
 ## Vampire Core Calculus (VCC)
-這邊還是一般 Clause form。 (避免被誤解成 Horn VCC)
+這邊還是一般 Clause form。 (要避免被誤解成 Horn VCC)
 John Robinson 發明出一個 Resolution (Resolution rule and Factoring rule)，希望有一個像是 Hilbert System (many axioms 和 one inference rule)的自動化證明系統。 
+### Classical 的解釋
 - 所有要經過 Core Calculus 的 input，都會被先預處理成 CNF。
 - Resolution(eliminate clause): input 2 clause, output 1 clause，來達到消減 clause 的數量。
 - Factoring(eliminate literal): input 1 clause, output 1 個
-- Superpostion: Resolution + Equality(Reflexivity rule + Replacement rule) = Paramodulation. And Superposition is a strict order Paramodulation.
+消減成 bot 或者 empty 後，我們就可以得到證明。
+
+- Superposition: Resolution + Equality(Reflexivity rule + Replacement rule) = Paramodulation. And Superposition is a strict order Paramodulation.
 - Equal Resolution: Just like Factoring, working with Superposition.
+
+### 直觀解釋
+- Superposition: 
+
 所以就可以看到左手邊的 rules 著重在消減 clause 的數量，而右手邊的 rules 著重在消減重複 literal 的數量。
 這邊的 rules 並沒有維持 equivalent，但是他是基於 equisatisfiability. (Inference rule 的 premises 是 SAT, conclusion 也會是 SAT. 同樣的，premises 是 UnSAT，conclusion 夜會是 UnSAT)
 - mgu
