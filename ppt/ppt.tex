@@ -244,14 +244,15 @@ t2 : (-u + u) + u = ze + u
 t2 = cong (_+ u) (negl u)
    
 ans : -u + (u + u) = u
-ans = trans t1 t2
+ans = trans (trans t1 t2) (neutl u)
 \end{Verbatim}
     \vfill
-    sym : \{A : Set\} \{x y : A\} x $\equiv$ y $\rightarrow$ y $\equiv$ x \\
-    cong : \{A B : Set\} \{x y : A\} (f : A $\rightarrow$ B) $\rightarrow$ x $\equiv$ y $\rightarrow$ f x $\equiv$ f y\\
-    trans : \{A : Set\} \{x y z : A\} x $\equiv$ y $\rightarrow$ y $\equiv$ z $\rightarrow$ x $\equiv$ z \\
-    negl : \{V : Set\} \{u : V\} (- u) + u = ze \\
-    assoc : \{V : Set\} \{u v w : V\} (u + v) + w = u + (v + w) \\
+    sym : \{x y : A\} x = y $\rightarrow$ y = x \\
+    cong : \{x y : A\} (f : A $\rightarrow$ B) $\rightarrow$ x = y $\rightarrow$ f x = f y\\
+    trans : \{x y z : A\} x = y $\rightarrow$ y = z $\rightarrow$ x = z \\
+    neutl : (u : V) $\rightarrow$ ze + u = u \\
+    negl : (u : V) $\rightarrow$ (- u) + u = ze \\
+    assoc : (u v w : V) $\rightarrow$ (u + v) + w = u + (v + w) \\
 \end{frame}
 
 \begin{frame}{Contents}
@@ -269,14 +270,14 @@ ans = trans t1 t2
                                        \mid \mathit{term} = \mathit{term}
                                        \mid \top \mid \bot \\[6pt]
         \mathit{literal} & \Coloneqq & \mathit{atom} \mid \neg\, \mathit{atom} \\[6pt]
-        \varphi          & \Coloneqq & \mathit{literal} \mid \neg\varphi \mid \varphi \land \varphi \\[2pt]
+        \varphi          & \Coloneqq & \mathit{literal} \mid \neg\varphi \mid \varphi \land \varphi \mid \varphi \lor \varphi \\[2pt]
                          &           & \mid\ \varphi \to \varphi \mid \varphi \leftrightarrow \varphi \\[2pt]
                          &           & \mid\ \forall x\, \varphi \mid \exists x\, \varphi
     \end{array}
     \]
     The key point of translation: $P \rightarrow Q \equiv \neg P \lor Q$ \\
     Vampire is based on \textbf{refutation proof}. \\
-    (It is likely \textbf{proof by contradiction}.) \\
+    (It is \textbf{proof by contradiction}.) \\
     \vfill
     %-{\footnotesize Vampire draws distinction between \textbf{terms} and \textbf{formulae}. why? \\}
     %-{\footnotesize Terms are inhabitants of the domain, which are \textbf{non-empty}. \\}
@@ -408,8 +409,9 @@ ans = trans t1 t2
 
 \section{Vampire to Agda}
 \begin{frame}{A classical proof to intuitionistic proof}
-    Restricting both systems to a common language (Horn Clause). \\
-    They wish to show $\Gamma \vdash G$, and Vampire obtain a classical proof by refutation showing $\Gamma, \neg G \vdash \bot$
+    %Restricting both systems to a common language (Horn Clause). \\
+    We restrict Vampire to Horn Clauses and show $\Gamma \vdash G$. \\
+    Assuming that this is provable, and Vampire obtains a classical proof by refutation showing $\Gamma, \neg G \vdash \bot$
     \begin{itemize}
         \item $\Gamma, \neg G \vdash \bot$ 
         \item $\Gamma, G \rightarrow \bot \vdash \bot$ 
@@ -417,21 +419,23 @@ ans = trans t1 t2
     \end{itemize}
     \vfill
     {\footnotesize $\Gamma$ is ``a set of definite clauses'', $G$ is ``ground goal atom''. \\}
-    {\footnotesize In general $\bot$ may be woven through the entire proof, \\}
-    {\footnotesize \textbf{replacing $\bot$ from top right of tree.} \\}
+    %{\footnotesize In general $\bot$ may be woven through the entire proof, \\}
+    %{\footnotesize \textbf{replacing $\bot$ from top right of tree.} \\}
 \end{frame}
 
 \begin{frame}{Lemmas}
     \begin{itemize}
-        \item Lemma 1: If Premises are Horn clause, then Conclusion is also Horn.
-        \item Lemma 2: Horn Vampire Core Calculus(HVCC) is intuitionistically valid.
-        \item Lemma 3 (Redundancy Property) : If we finally derived  $\bot$ from Horn Vampire Core Calculus(HVCC), then ???
+        \item Lemma 1: For every VCC rule, if its premises are Horn, then its conclusion is also Horn. \\
+        (Translate Horn Clause to Horn Implication.)
+        \item Lemma 2: Horn Vampire Core Calculus(HVCC) is intuitionistically valid. \\
+        \item Lemma 3: Let $\Gamma$ be definite clauses and \textbf{$G$ be a ground atom.}
+        If $\Gamma, G \rightarrow \bot \vdash \bot$ is derivable in HVCC, then $\Gamma, G \rightarrow G \vdash G$ is also derivable in HVCC.
     \end{itemize}
     \vfill
     {\footnotesize Vampire Core Calculus = VCC, Horn VCC = HVCC \\}
 \end{frame}
 
-\begin{frame}{Vampire Core Calculus (General and Horn Clause)}
+\begin{frame}{Proof of Lemma 1}
     \tiny
     \begin{columns}[T]
       \begin{column}{0.46\textwidth}
@@ -453,7 +457,7 @@ ans = trans t1 t2
         \end{mathpar}
       \end{column}
       \begin{column}{0.54\textwidth}
-        \centering\scriptsize\textbf{HVCC}
+        \centering\scriptsize
         \begin{mathpar}
           \inferrule*[right=\textsc{Res.}]{\neg P \lor A \quad \neg A' \lor \neg Q \lor \boxed{B}}{\sigma(\neg P \lor \neg Q \lor \boxed{B})}
         \end{mathpar}
@@ -478,11 +482,11 @@ ans = trans t1 t2
     {\footnotesize $\neg$P = $\neg(A_1 \land A_2 ...)$, C = $\neg A_1 \lor \neg A_2 ...$ (Horn and De Morgan) \\}
 \end{frame}
 
-\begin{frame}{Vampire Core Calculus (Clause and Implication)}
+\begin{frame}{Horn Vampire Core Calculus (HVCC)}
     \tiny
     \begin{columns}[T]
       \begin{column}{0.50\textwidth}
-        \centering\scriptsize\textbf{HVCC}
+        \centering\scriptsize
         \begin{mathpar}
           \inferrule*[right=\textsc{Res.}]{\neg P \lor A \quad \neg A' \lor \neg Q \lor \boxed{B}}{\sigma(\neg P \lor \neg Q \lor \boxed{B})}
         \end{mathpar}
@@ -500,7 +504,7 @@ ans = trans t1 t2
         \end{mathpar}
       \end{column}
       \begin{column}{0.50\textwidth}
-        \centering\scriptsize\textbf{HVCC$^{Imp}$}
+        \centering\scriptsize\textbf{HVCC}
         \begin{mathpar}
           \inferrule*[right=\textsc{Res.}]{P \to A \quad A' \land Q \to \boxed{B}}{\sigma(P \land Q \to \boxed{B})}
         \end{mathpar}
@@ -521,14 +525,18 @@ ans = trans t1 t2
     \vfill
     {\footnotesize P, Q = premises;\; A, B = atoms;\;
      $\mathrm{mgu}(A,A')$, $\mathrm{mgu}(l,l')$, $\mathrm{mgu}(s,t)$ \\}
-    {\footnotesize $\neg P \lor A$ = $P \rightarrow A$ \\}
+    {\footnotesize definite clause: $\neg A_1 \lor \neg A_2 \lor ... \lor B$ $\Longrightarrow$
+                                    $A_1 \land A_2 \land ... \rightarrow B$ \\}
+    {\footnotesize goal clause: 
+          $\neg A_1 \lor \neg A_2 \lor ... \lor \neg A_n$ $\Longrightarrow$
+          $A_1 \land A_2 \land ... \land A_n \rightarrow \bot$ \\}
 \end{frame}
 
-\begin{frame}{Vampire Core Calculus (Propositions as types)}
+\begin{frame}{Proof of Lemma 2}
     \tiny
     \begin{columns}[T]
       \begin{column}{0.46\textwidth}
-        \centering\scriptsize\textbf{HVCC$^{Imp}$}
+        \centering\scriptsize\textbf{HVCC}
         \begin{mathpar}
           \inferrule*[right=\textsc{Res.}]{P \to A \quad A' \land Q \to \boxed{B}}{\sigma(P \land Q \to \boxed{B})}
         \end{mathpar}
@@ -567,8 +575,10 @@ ans = trans t1 t2
       \end{column}
     \end{columns}
     \vfill
-    {\footnotesize $\mathsf{subst} : l = r \to A[l] \to A[r]$,
-     $\mathsf{sym} : l = r \to r = l$. \\ }
+    {\footnotesize 
+     $\mathsf{refl} : l = l$,
+     $\mathsf{sym} : l = r \to r = l$, 
+     $\mathsf{subst} : l = r \to A[l] \to A[r]$. \\ }
 \end{frame}
 
 %-\begin{frame}{Superposition derived from Resolution (Cont)}
@@ -587,7 +597,7 @@ ans = trans t1 t2
 %-    }
 %-\end{frame}
 
-\begin{frame}{Example 2}
+\begin{frame}{An example of applying Lemma 3}
     \footnotesize
     \begin{center}
     $t_1\!:\!\forall x.\, f(x) = x,\;\;
@@ -610,15 +620,15 @@ ans = trans t1 t2
         }{c = c \to \boxed{\bot}}
       }{\boxed{\bot}}
     \end{mathpar}
-    {\footnotesize replace each $\boxed{\bot}$ by a = b}
+    {\footnotesize replace each $\boxed{\bot}$ by $a = b$}
 \end{frame}
 
 \section{Thesis Proposal}
 \begin{frame}{Thesis Proposal}
+    Formalize and verify the translation from Vampire to Agda. \\
     \begin{itemize}
-        \item Formalize HVCC$^{Imp}$ (5 Implication rules) by deep embedding.
-        \item Prove the $\Gamma, G \rightarrow \bot \vdash \bot$, replace $\bot$ by $G$. \\
-        (Lemma1, 2, 3) \\
+        \item Formalize HVCC by deep embedding.
+        \item Prove Lemmas 1, 2, 3. \\
     \end{itemize}
 \end{frame}
 
