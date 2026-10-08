@@ -273,7 +273,7 @@ trivial u = trans (trans t1 t2) (neutl u)
         \textit{term}    & \Coloneqq & x \mid c \mid f(\textit{term}, \dots, \textit{term}) \\[6pt]
         \textit{atom}    & \Coloneqq & P(\textit{term}, \dots, \textit{term})
                                        \mid \textit{term} = \textit{term}
-                                       \mid \top \mid \bot \\[6pt]
+                                       \mid \bot \\[6pt]
         \textit{literal} & \Coloneqq & \textit{atom} \mid \neg\, \textit{atom} \\[6pt]
         \varphi          & \Coloneqq & \textit{literal} \mid \neg\varphi \mid \varphi \land \varphi \mid \varphi \lor \varphi \\[2pt]
                          &           & \mid\ \varphi \to \varphi \mid \varphi \leftrightarrow \varphi \\[2pt]
