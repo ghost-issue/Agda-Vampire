@@ -160,7 +160,7 @@
 \title{When Agda met Vampire}
 \subtitle{Artjoms \v{S}inkarovs and Michael Rawson}
 \author{Jia-Wei Zhang}
-\date{08/2026}
+\date{10/2026}
 
 \begin{document}
 
@@ -476,7 +476,7 @@ trivial u = trans (trans t1 t2) (neutl u)
           \inferrule*[right=\textsc{Sup.L}]{\neg P \lor l = r \quad \neg A[l'] \lor \neg Q \lor \boxed{B}}{\sigma(\neg P \lor \neg A[r] \lor \neg Q \lor \boxed{B})}
         \end{mathpar}
         \begin{mathpar}
-          \inferrule*[right=\textsc{Sup.R}]{\neg P \lor l = r \quad \neg Q \lor A[l']}{\sigma(\neg P \lor \neg Q \lor A[r])}
+          \inferrule*[right=\textsc{Sup.R}]{\neg P \lor l = r \quad \neg Q \lor \boxed{A[l']}}{\sigma(\neg P \lor \neg Q \lor \boxed{A[r]})}
         \end{mathpar}
       \end{column}
     \end{columns}
@@ -505,7 +505,7 @@ trivial u = trans (trans t1 t2) (neutl u)
           \inferrule*[right=\textsc{Sup.L}]{\neg P \lor l = r \quad \neg A[l'] \lor \neg Q \lor \boxed{B}}{\sigma(\neg P \lor \neg A[r] \lor \neg Q \lor \boxed{B})}
         \end{mathpar}
         \begin{mathpar}
-          \inferrule*[right=\textsc{Sup.R}]{\neg P \lor l = r \quad \neg Q \lor A[l']}{\sigma(\neg P \lor \neg Q \lor A[r])}
+          \inferrule*[right=\textsc{Sup.R}]{\neg P \lor l = r \quad \neg Q \lor \boxed{A[l']}}{\sigma(\neg P \lor \neg Q \lor \boxed{A[r]})}
         \end{mathpar}
       \end{column}
       \begin{column}{0.50\textwidth}
@@ -523,7 +523,7 @@ trivial u = trans (trans t1 t2) (neutl u)
           \inferrule*[right=\textsc{Sup.L}]{P \to l = r \quad A[l'] \land Q \to \boxed{B}}{\sigma(P \land A[r] \land Q \to \boxed{B})}
         \end{mathpar}
         \begin{mathpar}
-          \inferrule*[right=\textsc{Sup.R}]{P \to l = r \quad Q \to A[l']}{\sigma(P \land Q \to A[r])}
+          \inferrule*[right=\textsc{Sup.R}]{P \to l = r \quad Q \to \boxed{A[l']}}{\sigma(P \land Q \to \boxed{A[r]})}
         \end{mathpar}
       \end{column}
     \end{columns}
@@ -555,7 +555,7 @@ trivial u = trans (trans t1 t2) (neutl u)
           \inferrule*[right=\textsc{Sup.L}]{P \to l = r \quad A[l'] \land Q \to \boxed{B}}{\sigma(P \land A[r] \land Q \to \boxed{B})}
         \end{mathpar}
         \begin{mathpar}
-          \inferrule*[right=\textsc{Sup.R}]{P \to l = r \quad Q \to A[l']}{\sigma(P \land Q \to A[r])}
+          \inferrule*[right=\textsc{Sup.R}]{P \to l = r \quad Q \to \boxed{A[l']}}{\sigma(P \land Q \to \boxed{A[r]})}
         \end{mathpar}
       \end{column}
       \begin{column}{0.54\textwidth}
@@ -633,7 +633,7 @@ trivial u = trans (trans t1 t2) (neutl u)
     Formalize and verify the translation from Vampire to Agda. \\
     \begin{itemize}
         \item Formalize HVCC by deep embedding.
-        \item Prove Lemmas 1, 2, 3. \\
+        \item Prove Lemmas 2, 3. \\
     \end{itemize}
 \end{frame}
 
