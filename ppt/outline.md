@@ -39,7 +39,7 @@
 - sym: 如果 x equal to y， 基於 symmetric rule 我可以得到 y equal to x
 - cong: 如果 x equal to y, 基於 congruence rule 我可以得到 fx equal to fy
 - trans: 如果 x equal to y 和 y equal to z, 基於 transtive rule 我可以得到 x equal to z.
-- neutl: zero vector 加上 vector 等於 這個 vecotr
+- neutl: zero vector 加上 vector 等於 這個 vector
 - negl: negative vector 加上 positive vector 會等於 zero vector
 - assoc: 就是我們知道的結合律
 
@@ -48,7 +48,7 @@ trivial 就是我們想要證明的目標，一個 negative vector 加上 兩個
 - t2: 一樣看到左手邊的這個括號等於 zero vector，所以我們會對右手邊的這個 + u，做 cong (negl)
 - trivial u: 在基於 transive rule 來把 t1 和 t2 接起來，在 trans 前面這一塊和 neutl u
 ## Contents
-我前面介紹完了動機與背景知識，前面介紹的內容就是動機裡面下面的箭頭，從Agda 到 Vampire 的過程。而我們接下來會看到剩下的兩個步驟，是如何進行的。 最後一步 type checking 就不是我們這次會介紹到的範圍。
+我前面介紹完了動機與背景知識，前面介紹的內容就是動機裡面下面的箭頭，從Agda 到 Vampire 的過程。而我們接下來會看到第二，第三步，是如何進行的。 最後一步 type checking 就不是我們這次會介紹到的範圍。
 - Classical FOL: 因為前面提到 ATP 都是基於 Classical FOL，來做自動證明，所以我會介紹到 ATP 所需要的內容。 (Vampire search a proof)
 - Vampire Core Calculus: 再來會介紹到 Vampire Core Calculus，來理解 Vampire 內部是如何自動找出證明的 (Vampire search a proof)
 - Vampire to Agda 的流程就是對應到前面那張圖片上面的箭頭，也會是我的 Thesis Proposal 主要關注的重點，如何從 Classical 到 Intuitionistic (Translate)
@@ -65,6 +65,13 @@ trivial 就是我們想要證明的目標，一個 negative vector 加上 兩個
 - Horn clause: 基於 FOL clause 再加上新的限制
     1. definite clause: 基於 logic programming 的方式來證明(head :- body)，直觀的理解，就是由一堆前提推出一個結論
     2. goal clause: 因為 refutation proof 的關係，所以需要把 goal 做 negation，就會的得到下面這個形式。
+## VCC 簡化版
+- 所有要經過 Core Calculus 的 input，都會被先預處理成 CNF。
+- Resolution: we got a contradiction
+- Factoring: We have redudant atom, so we remove redudant one
+- Replacement: we have l=r and A contain of l, and we replace l by r in A.
+- Equal Resolution: We have s=s and s/=s, so based on resolution, we got the empty.
+## VCC簡化版 到 VCC
 ## Vampire Core Calculus (VCC)
 這邊還是一般 Clause form。 (要避免被誤解成 Horn VCC)
 John Robinson 發明出一個 Resolution (Resolution rule and Factoring rule)，希望有一個像是 Hilbert System (many axioms 和 one inference rule)的自動化證明系統。 
@@ -76,9 +83,6 @@ John Robinson 發明出一個 Resolution (Resolution rule and Factoring rule)，
 
 - Superposition: Resolution + Equality(Reflexivity rule + Replacement rule) = Paramodulation. And Superposition is a strict order Paramodulation.
 - Equal Resolution: Just like Factoring, working with Superposition.
-
-### 直觀解釋
-- Superposition: 
 
 所以就可以看到左手邊的 rules 著重在消減 clause 的數量，而右手邊的 rules 著重在消減重複 literal 的數量。
 這邊的 rules 並沒有維持 equivalent，但是他是基於 equisatisfiability. (Inference rule 的 premises 是 SAT, conclusion 也會是 SAT. 同樣的，premises 是 UnSAT，conclusion 夜會是 UnSAT)
@@ -102,7 +106,7 @@ step 6 : 對 negl 和 assoc 使用 superposition 來得到 step 6 的 theorem。
 - 接下來會介紹最重要的部分是 從 Vampire 到 Agda, 從 Classical 到 Intuitionistic
 - 我們證明的形式會是 Gamma entail G。
 1. 我們會限制 Vampire 在 Horn Clause 的情況下。基於 Vampire 的 proof by refutation，變成 Gamma and neg G entail bot. 在轉換成 implication 的形式。
-2. 完整的 vampire core calculus 是 classical proof，但是經過限制成 horn 版本，就可以 intuitionistic valid. (為什麼是 intuitionistic valid? 來源可以看 Dale Miller's Uniform proofs Thm1, first-order horn clause(fohc) is even minimal valid. )
+2. 完整的 vampire core calculus 是 classical proof，但是經過限制成 horn 版本，就可以 intuitionistic valid. (為什麼是 intuitionistic valid? 這會是我 Thesis 要證明的事情. )
 3. 經過轉換過後，最後可以把 bot 都替換成 G，就可以很直接的得到 Gamma entail G 在 intuitionistic proof.
 ## Lemmas
 - Lemma 1: 所有的 VCC rules, 如果 premises 是 horn, 則 conclusion 也會是 horn. 且我們會基於把 disj 的形式，轉換成 conj 和 imply 的形式
@@ -125,6 +129,7 @@ step 6 : 對 negl 和 assoc 使用 superposition 來得到 step 6 的 theorem。
 ## An example of applying Lemma 3
 - Gamma: t1, t2, t3
 - G: t4: a = b
+
 這邊我們可以先有一個直觀理解的證明，a = f(c) 且 b = c，我就可以有 a = f(b)，之後又基於 a = b 和 t1，我們可以知道這個證明會是對的。
 ...
 當然這邊的證明會有很多種形式，但是最終都能推導出一樣的結論。

@@ -320,6 +320,17 @@ trivial u = trans (trans t1 t2) (neutl u)
 %-        \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{img/vampire.png}
 %-    \end{center}
 %-\end{frame}
+\begin{frame}{Vampire Core Calculus (Ground and Simplify version)}
+    \begin{mathpar}
+       \inferrule*[right=\textsc{Resolution}]{A \\ \neg A}{\bot} \and
+        \inferrule*[right=\textsc{Factoring}]{A \lor A}{A} \\
+        \inferrule*[right=\textsc{Replacement}]{l = r \\ A[l]}{A[r]}
+        \inferrule*[right=\textsc{Eq.\ Resolution}]{s \neq s}{\bot}
+    \end{mathpar}
+    \vfill
+    {\footnotesize $A$, $A[l]$ are atoms. \\}
+    {\footnotesize $l$, $r$, $s$ are terms. \\}
+\end{frame}
 
 \begin{frame}{Vampire Core Calculus}
     \begin{mathpar}
@@ -530,11 +541,9 @@ trivial u = trans (trans t1 t2) (neutl u)
     \vfill
     {\footnotesize $P$, $Q$ = premises;\; $A$, $B$ = atoms;\;
      $\mathsf{mgu}(A,A')$, $\mathsf{mgu}(l,l')$, $\mathsf{mgu}(s,t)$ \\}
+    {\footnotesize $\neg P = \neg(A_1 \land A_2 \land \cdots)$ $\Longrightarrow$ $\neg A_1 \lor \neg A_2 \lor \cdots \neg A_n$ \\}
     {\footnotesize definite clause: $\neg A_1 \lor \neg A_2 \lor \cdots \lor B$ $\Longrightarrow$
                                     $A_1 \land A_2 \land \cdots \rightarrow B$ \\}
-    {\footnotesize goal clause: 
-          $\neg A_1 \lor \neg A_2 \lor \cdots \lor \neg A_n$ $\Longrightarrow$
-          $A_1 \land A_2 \land \cdots \land A_n \rightarrow \bot$ \\}
 \end{frame}
 
 \begin{frame}{Proof of Lemma 2}
