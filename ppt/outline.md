@@ -16,9 +16,6 @@
 - 為什麼要分別提到 ATP 和 ITP呢? 實際上，ATP 和 ITP 會互相結合, 像是tactics and Hammer
 - 接下來看論文主要的架構
 ## Motivation
-- 雙方都可以得到的好處:
-    - Agda: 有更好的自動證明
-    - Vampire: 能更確認他的輸出的證明是正確的
 - 所以這張圖片給了我們這篇論文的核心運作原理：
 1. 首先看下面的這個箭頭，我們會從一段 agda 程式開始，把 Agda 的程式翻譯成 Vampire 的輸入格式。
 2. 轉換完成後，讓 Vampire 基於這些 Axioms, Theorems 和 conjecture，來自動找出證明。
