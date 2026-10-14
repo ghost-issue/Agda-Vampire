@@ -4,7 +4,7 @@
 ## Title
 "When Agda met Vampire" 是一篇2026年的 preprint 的 paper。
 這篇論文主要貢獻是提供 Agda 和 Vampire 之間的轉換。
-而我的 Thesis Proposal 是從這篇論文去做延伸。
+而我的 Thesis Proposal 是從這篇論文去做延伸。 我們會先從 background 和 Motivation 出發
 ## Background
 - ATP
 - ITP
@@ -13,11 +13,11 @@
     - IJCAR: Internation Joint Conference on Automated Reasoning, 通常這三個會議會一起舉辦
     - CADE: Conference on Automated Deduction
     - TABLEAUX: 這個會議的名稱也是另外一種 ATP，跟這次介紹主流 ATP 屬於另一種派別。 
-- ATP 和 ITP 的結合, tactics and Hammer
+- 為什麼要分別提到 ATP 和 ITP呢? 實際上，ATP 和 ITP 會互相結合, 像是tactics and Hammer
 - 接下來看論文主要的架構
 ## Motivation
 - 雙方都可以得到的好處:
-    - Agda: 有好的自動證明
+    - Agda: 有更好的自動證明
     - Vampire: 能更確認他的輸出的證明是正確的
 - 所以這張圖片給了我們這篇論文的核心運作原理：
 1. 首先看下面的這個箭頭，我們會從一段 agda 程式開始，把 Agda 的程式翻譯成 Vampire 的輸入格式。
@@ -53,6 +53,7 @@ trivial 就是我們想要證明的目標，一個 negative vector 加上 兩個
 - Classical FOL: 因為前面提到 ATP 都是基於 Classical FOL，來做自動證明，所以我會介紹到 ATP 所需要的內容。 (Vampire search a proof)
 - Vampire Core Calculus: 再來會介紹到 Vampire Core Calculus，來理解 Vampire 內部是如何自動找出證明的 (Vampire search a proof)
 - Vampire to Agda 的流程就是對應到前面那張圖片上面的箭頭，也會是我的 Thesis Proposal 主要關注的重點，如何從 Classical 到 Intuitionistic (Translate)
+- 最後一步，type checking 就不會是我們主要的重點。
 - Thesis Proposal
 ## Classical FOL
 - term
@@ -74,10 +75,9 @@ trivial 就是我們想要證明的目標，一個 negative vector 加上 兩個
 - Equal Resolution: We have s=s and s/=s, so based on resolution, we got the empty.
 ## VCC (Ground)
 - Factoring: 可以直觀得看到加入一個 clause，也不影響 factoring rule, 而其他 rule 會在後面的 slide 中介紹到詳細內容。
-- Resolution: 我們可以先把兩個 clauses 轉換成 implication 的形式，得到兩個 semantic equivalent 的 formulas。
-- 基於 semantically existential。
-- Equality Resolution: 加入 clause 後，再把把 s = s 轉換成 Atom 後，得到這個 inference rule, 之後我們就可以看到 resolution 和 modus ponens 的連結。
-- Superposition: 我們知道要做 replace (rewrite) 這件事，我們要經由確認 l=r 是 true 這件事，來推導出 C and (L[r] or D)，再經過 distribute law 後，我們得到這個 formulae。再使用 Semantically existential quantification 來得到 superposition 得 conclusion。
+- Resolution: 我們可以先把兩個 clauses 轉換成 implication 的形式，得到兩個 semantic equivalent 的 formulas，之後再基於 A is true 和 Ａ is false 推導出 C or D，但對嗎？ resolution 這個 rule 本身會推導出 equisat 的 clause，可以看到這個 truth table 可以看到 resolution rule 不是 semantic equivalent 的。
+- Equality Resolution: 加入 clause 後，再把 s = s 轉換成 Atom 後，得到這個 inference rule, 之後我們就可以看到 resolution 和 modus ponens 的連結。
+- Superposition: 我們知道要做 replace (rewrite) 這件事，我們要經由確認 l=r 是 true 這件事，來推導出 C and (L[r] or D)，再經過 distribute law 後，我們得到這個 formulae。再對C 賦予 Semantic 來得到 superposition 的 conclusion。
 ## Vampire Core Calculus (VCC)
 這邊還是一般 Clause form。 (要避免被誤解成 Horn VCC)
 John Robinson 發明出一個 Resolution (Resolution rule and Factoring rule)，希望有一個像是 Hilbert System (many axioms 和 one inference rule)的自動化證明系統。 
@@ -95,6 +95,10 @@ John Robinson 發明出一個 Resolution (Resolution rule and Factoring rule)，
 - mgu
 - "A[l']": 是帶有 l' 的 atomic
 - footnote
+## Resolution
+跟前面投影片一樣，加入 unification。 
+## Superposition
+跟前面投影片一樣，加入 unification。
 ## Example 1
 下面是 Vampire 找到的證明，而上面是整理下面的證明後的易讀版本
 - neutl
