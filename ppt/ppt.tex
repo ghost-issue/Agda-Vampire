@@ -450,6 +450,17 @@ trivial u = trans (trans t1 t2) (neutl u)
     {\footnotesize $\sigma = mgu(A, A')$, $\sigma(A) = \sigma(A')$ \\}
 \end{frame}
 
+\begin{frame}{Equality Resolution (Nonground)}
+    \[
+    \renewcommand{\arraystretch}{1.5}
+    \begin{array}{c@{\quad}c@{\quad}c}
+        \inferrule*[right=Eq.Res]{\sigma(s) = \sigma(t) \\ \inferrule{\inferrule{s \neq t \lor C}{\sigma(s \neq t) \lor \sigma(C)}}{\sigma(s) \neq \sigma(t) \lor \sigma(C)}}{\sigma(C)}
+    \end{array}
+    \]
+    \vfill
+    {\footnotesize $\sigma = mgu(s, t)$, $\sigma(s) = \sigma(t)$ \\}
+\end{frame}
+
 \begin{frame}{Superposition (Nonground)}
     \begin{mathpar}
         \inferrule*[right=\textsc{SUP.}]{\inferrule{l = r \lor C}{\sigma(l = r) \lor \sigma(C)} \\ \inferrule{L[l'] \lor D}{\sigma(L[l']) \lor \sigma(D)}}{\sigma(L[r] \lor C \lor D)}
