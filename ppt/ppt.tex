@@ -345,7 +345,77 @@ trivial u = trans (trans t1 t2) (neutl u)
     {\footnotesize $l$, $r$, $s$ are terms. \\}
 \end{frame}
 
-\begin{frame}{Vampire Core Calculus}
+\begin{frame}{Resolution}
+    \begin{mathpar}
+        \inferrule*[right=\textsc{Res.}]
+          {\inferrule{A \lor C}{\neg A \to C} \\ \inferrule{\neg A \lor D}{A \to D}}
+          {C \lor D}
+    \end{mathpar}
+    \vspace{0.5cm}
+    -% semantically
+    \begin{itemize}
+        \item If $A$ is true, then $D$.
+        \item If $A$ is false, then $C$.
+    \end{itemize}
+    Either way, $C \lor D$ holds, right?
+    \vfill
+    {\footnotesize $A$ is atom. $C$, $D$ are Clauses. \\}
+\end{frame}
+
+\begin{frame}{Resolution produces an equisatisfiable clause}
+    \[
+    \renewcommand{\arraystretch}{1.3}
+    \begin{array}{ccc@{\qquad}c@{\qquad}c}
+        A & C & D & (A \lor C) \land (\neg A \lor D) & C \lor D \\ \hline
+        \Tt & \Tt & \Tt & \Tt & \Tt \\
+        \Tt & \Tt & \Ff & \boxed{\Ff} & \boxed{\Tt} \\
+        \Tt & \Ff & \Tt & \Tt & \Tt \\
+        \Tt & \Ff & \Ff & \Ff & \Ff \\
+        \Ff & \Tt & \Tt & \Tt & \Tt \\
+        \Ff & \Tt & \Ff & \Tt & \Tt \\
+        \Ff & \Ff & \Tt & \boxed{\Ff} & \boxed{\Tt} \\
+        \Ff & \Ff & \Ff & \Ff & \Ff
+    \end{array}
+    \]
+\end{frame}
+
+\begin{frame}{Equality Resolution}
+    \[
+    \renewcommand{\arraystretch}{1.5}
+    \begin{array}{c@{\quad}c@{\quad}c}
+        \inferrule{s = s \\ s \neq s}{\bot} & & \\
+        \Big\downarrow \text{\footnotesize\ add clauses} & & \\
+        \inferrule{s = s \\ s \neq s \lor C}{C}
+          & \xrightarrow{A : s = s;\; \neg A : s \neq s}
+          & \inferrule*[right=\textsc{Res.}]{\neg A \lor C \\ A}{C} \\
+        & & \Big\updownarrow \\
+        & & \inferrule*[right=\textsc{MP.}]{A \to C \\ A}{C}
+    \end{array}
+    \]
+    \vfill
+    Modus Ponens is special case of Resolution in Classical Logic.
+\end{frame}
+
+\begin{frame}{Superposition}
+    \begin{mathpar}
+        \inferrule*[right=\textsc{SUP.}]{l = r \lor C \\ L[l] \lor D}{L[r] \lor C \lor D}
+    \end{mathpar}
+    \vspace{0.1cm}
+    -% semantically
+    \begin{center}
+        Because $l = r$ is true and $L[l]$. \\[0.5em]
+        $C \land (L[r] \lor D)$ \\[0.5em]
+        $(C \land L[r]) \lor (C \land D)$
+    \end{center}
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item If $C$ is true, then $L[r] \lor D$.
+        \item If $C$ is false, then formulae is false.
+    \end{itemize}
+    Either way, $L[r] \lor C \lor D$ holds.
+\end{frame}
+
+\begin{frame}{Vampire Core Calculus (Nonground)}
     \begin{mathpar}
         \inferrule*[right=\textsc{Resolution}]{A \lor C \\ \neg A' \lor D}{\sigma(C \lor D)} \and
         \inferrule*[right=\textsc{Factoring}]{A \lor A' \lor C}{\sigma(A \lor C)} \\
@@ -360,6 +430,44 @@ trivial u = trans (trans t1 t2) (neutl u)
     {\footnotesize $A$ is atom. $L[l'], L[r]$ are literals. \\}
     {\footnotesize $C$, $D$ are clauses. \\}
     {\footnotesize $l$, $l'$, $r$, $s$, $t$ are terms. \\}
+\end{frame}
+
+\begin{frame}{Resolution (Nonground)}
+    \begin{mathpar}
+        \inferrule*[right=\textsc{Res.}]
+          {\inferrule{\inferrule{A \lor C}{\sigma(\neg A \to C)}}{\neg\sigma(A) \to \sigma(C)} \\ \inferrule{\inferrule{\neg A' \lor D}{\sigma(A' \to D)}}{\sigma(A') \to \sigma(D)}}
+          {\sigma(C \lor D)}
+    \end{mathpar}
+    \vspace{0.5cm}
+    %- Semantically existential quantification, eliminating existential quantifiers.
+    \begin{itemize}
+        \item If $\sigma(A')$ is true, then $\sigma(D)$.
+        \item If $\sigma(A)$ is false, then $\sigma(C)$.
+    \end{itemize}
+    Either way, $\sigma(C) \lor \sigma(D)$ holds, $\sigma(C \lor D)$ also holds.
+    \vfill
+    {\footnotesize $A$ is atom. $C$, $D$ are Clauses. \\}
+    {\footnotesize $\sigma = mgu(A, A')$, $\sigma(A) = \sigma(A')$ \\}
+\end{frame}
+
+\begin{frame}{Superposition (Nonground)}
+    \begin{mathpar}
+        \inferrule*[right=\textsc{SUP.}]{\inferrule{l = r \lor C}{\sigma(l = r) \lor \sigma(C)} \\ \inferrule{L[l'] \lor D}{\sigma(L[l']) \lor \sigma(D)}}{\sigma(L[r] \lor C \lor D)}
+    \end{mathpar}
+    \vspace{0.1cm}
+    \begin{center}
+        Because $\sigma(l) = \sigma(r)$ is true and $\sigma(L[\sigma(l')])$. \\[0.5em]
+        $\sigma(C) \land (\sigma(L[r]) \lor \sigma(D))$ \\[0.5em]
+        $(\sigma(C) \land \sigma(L[r])) \lor (\sigma(C) \land \sigma(D))$
+    \end{center}
+    \vspace{0.1cm}
+    \begin{itemize}
+        \item If $\sigma(C)$ is true, then $\sigma(L[r]) \lor \sigma(D)$.
+        \item If $\sigma(C)$ is false, then formulae is false.
+    \end{itemize}
+    Either way, $\sigma(L[r]) \lor \sigma(C) \lor \sigma(D)$ holds.
+    \vfill
+    {\footnotesize $\sigma = mgu(l, l')$, $\sigma(l) = \sigma(l')$;\; $\sigma(L[l']) = \sigma(L[\sigma(l')])$ \\}
 \end{frame}
 
 %-\begin{frame}{Superposition derived from Resolution}

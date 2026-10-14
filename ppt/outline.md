@@ -12,7 +12,7 @@
     - CASC 是全稱是 CADE ATP System Competition, 是由 CADE 和 IJCAR 所舉辦的 ATP 競賽
     - IJCAR: Internation Joint Conference on Automated Reasoning, 通常這三個會議會一起舉辦
     - CADE: Conference on Automated Deduction
-    - TABLEAUX
+    - TABLEAUX: 這個會議的名稱也是另外一種 ATP，跟這次介紹主流 ATP 屬於另一種派別。 
 - ATP 和 ITP 的結合, tactics and Hammer
 - 接下來看論文主要的架構
 ## Motivation
@@ -73,10 +73,11 @@ trivial 就是我們想要證明的目標，一個 negative vector 加上 兩個
 - Replacement: we have l=r and A contain of l, and we replace l by r in A.
 - Equal Resolution: We have s=s and s/=s, so based on resolution, we got the empty.
 ## VCC (Ground)
-- Resolution:
-- Factoring:
-- Superposition:
-- Eqaul Resolution:
+- Factoring: 可以直觀得看到加入一個 clause，也不影響 factoring rule, 而其他 rule 會在後面的 slide 中介紹到詳細內容。
+- Resolution: 我們可以先把兩個 clauses 轉換成 implication 的形式，得到兩個 semantic equivalent 的 formulas。
+- 基於 semantically existential。
+- Equality Resolution: 加入 clause 後，再把把 s = s 轉換成 Atom 後，得到這個 inference rule, 之後我們就可以看到 resolution 和 modus ponens 的連結。
+- Superposition: 我們知道要做 replace (rewrite) 這件事，我們要經由確認 l=r 是 true 這件事，來推導出 C and (L[r] or D)，再經過 distribute law 後，我們得到這個 formulae。再使用 Semantically existential quantification 來得到 superposition 得 conclusion。
 ## Vampire Core Calculus (VCC)
 這邊還是一般 Clause form。 (要避免被誤解成 Horn VCC)
 John Robinson 發明出一個 Resolution (Resolution rule and Factoring rule)，希望有一個像是 Hilbert System (many axioms 和 one inference rule)的自動化證明系統。 
