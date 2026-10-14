@@ -273,6 +273,7 @@ trivial u = trans (trans t1 t2) (neutl u)
         \textit{term}    & \Coloneqq & x \mid c \mid f(\textit{term}, \dots, \textit{term}) \\[6pt]
         \textit{atom}    & \Coloneqq & P(\textit{term}, \dots, \textit{term})
                                        \mid \textit{term} = \textit{term}
+                                       \mid \top
                                        \mid \bot \\[6pt]
         \textit{literal} & \Coloneqq & \textit{atom} \mid \neg\, \textit{atom} \\[6pt]
         \varphi          & \Coloneqq & \textit{literal} \mid \neg\varphi \mid \varphi \land \varphi \mid \varphi \lor \varphi \\[2pt]
@@ -324,11 +325,23 @@ trivial u = trans (trans t1 t2) (neutl u)
     \begin{mathpar}
        \inferrule*[right=\textsc{Resolution}]{A \\ \neg A}{\bot} \and
         \inferrule*[right=\textsc{Factoring}]{A \lor A}{A} \\
-        \inferrule*[right=\textsc{Replacement}]{l = r \\ A[l]}{A[r]}
+        \inferrule*[right=\textsc{Replacement}]{l = r \\ L[l]}{L[r]}
         \inferrule*[right=\textsc{Eq.\ Resolution}]{s \neq s}{\bot}
     \end{mathpar}
     \vfill
-    {\footnotesize $A$, $A[l]$ are atoms. \\}
+    {\footnotesize $A$ is atom. $L[l], L[r]$ are literals. \\}
+    {\footnotesize $l$, $r$, $s$ are terms. \\}
+\end{frame}
+
+\begin{frame}{Vampire Core Calculus (Ground)}
+    \begin{mathpar}
+       \inferrule*[right=\textsc{Resolution}]{A \lor C \\ \neg A \lor D}{C \lor D} \and
+        \inferrule*[right=\textsc{Factoring}]{A \lor A \lor C}{A \lor C} \\
+        \inferrule*[right=\textsc{Superposition}]{l = r \lor C \\ L[l] \lor D}{L[r] \lor C \lor D}
+        \inferrule*[right=\textsc{Eq.\ Resolution}]{s \neq s \lor C}{C}
+    \end{mathpar}
+    \vfill
+    {\footnotesize $A$ is atom. $L[l], L[r]$ are literals. \\}
     {\footnotesize $l$, $r$, $s$ are terms. \\}
 \end{frame}
 
@@ -336,7 +349,7 @@ trivial u = trans (trans t1 t2) (neutl u)
     \begin{mathpar}
         \inferrule*[right=\textsc{Resolution}]{A \lor C \\ \neg A' \lor D}{\sigma(C \lor D)} \and
         \inferrule*[right=\textsc{Factoring}]{A \lor A' \lor C}{\sigma(A \lor C)} \\
-        \inferrule*[right=\textsc{Superposition}]{l = r \lor C \\ A[l'] \lor D}{\sigma(A[r] \lor C \lor D)}
+        \inferrule*[right=\textsc{Superposition}]{l = r \lor C \\ L[l'] \lor D}{\sigma(L[r] \lor C \lor D)}
         \inferrule*[right=\textsc{Eq.\ Resolution}]{s \neq t \lor C}{\sigma(C)}
     \end{mathpar}
     \vfill
@@ -344,7 +357,7 @@ trivial u = trans (trans t1 t2) (neutl u)
     {\footnotesize $\mathsf{mgu}(A, A')$ in Resolution and Factoring. \\}
     {\footnotesize $\mathsf{mgu}(l, l')$ in Superposition. \\}
     {\footnotesize $\mathsf{mgu}(s, t)$ in Equality Resolution. \\}
-    {\footnotesize $A$, $A[l']$ are atoms. \\}
+    {\footnotesize $A$ is atom. $L[l'], L[r]$ are literals. \\}
     {\footnotesize $C$, $D$ are clauses. \\}
     {\footnotesize $l$, $l'$, $r$, $s$, $t$ are terms. \\}
 \end{frame}
@@ -409,13 +422,13 @@ trivial u = trans (trans t1 t2) (neutl u)
     \begin{center}
     $\begin{array}{r@{\quad}l@{\qquad}l}
       2 & \forall x.\; (-x) + x = \mathsf{ze}        & (l = r)\\[3pt]
-      3 & \forall x\,y\,z.\; (x+y)+z = x+(y+z)       & (A[l'])
+      3 & \forall x\,y\,z.\; (x+y)+z = x+(y+z)       & (L[l'])
     \end{array}$
     \end{center}
     \vspace{4pt}
     \textbf{Sup. 3, 2}
     \begin{mathpar}
-      \inferrule*[right=\textsc{Sup.}]{l = r \\ A[l']}{\sigma(A[r])}
+      \inferrule*[right=\textsc{Sup.}]{l = r \\ L[l']}{\sigma(L[r])}
     \end{mathpar}
     \[\sigma = \{\, x \mapsto -x,\; y \mapsto x \,\}\]
     \begin{mathpar}
@@ -469,7 +482,7 @@ trivial u = trans (trans t1 t2) (neutl u)
         \end{mathpar}
         \vfill
         \begin{mathpar}
-          \inferrule*[right=\textsc{Sup.}]{l = r \lor C \quad A[l'] \lor D}{\sigma(A[r] \lor C \lor D)}
+          \inferrule*[right=\textsc{Sup.}]{l = r \lor C \quad L[l'] \lor D}{\sigma(L[r] \lor C \lor D)}
         \end{mathpar}
       \end{column}
       \begin{column}{0.54\textwidth}
@@ -492,7 +505,7 @@ trivial u = trans (trans t1 t2) (neutl u)
       \end{column}
     \end{columns}
     \vfill
-    {\footnotesize $P$, $Q$ = premises;\; $A$, $B$ = atoms;\; $C$, $D$ = clauses;\; \\
+    {\footnotesize $P$, $Q$ = premises;\; $A$, $B$ = atoms;\; $C$, $D$ = clauses;\; $L[l']$, $L[r]$ = literals;\; \\
      $\mathsf{mgu}(A,A')$, $\mathsf{mgu}(l,l')$, $\mathsf{mgu}(s,t)$ \\ }
     {\footnotesize $\boxed{}$ = positive atom. \\}
     {\footnotesize $\neg P = \neg(A_1 \land A_2 \land \cdots)$, $C = \neg A_1 \lor \neg A_2 \lor \cdots$ (Horn and De Morgan) \\}

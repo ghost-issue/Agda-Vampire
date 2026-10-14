@@ -10,8 +10,9 @@
 - ITP
 - Vampire 的歷史與獎項:
     - CASC 是全稱是 CADE ATP System Competition, 是由 CADE 和 IJCAR 所舉辦的 ATP 競賽
+    - IJCAR: Internation Joint Conference on Automated Reasoning, 通常這三個會議會一起舉辦
     - CADE: Conference on Automated Deduction
-    - IJCAR: Internation Joint Conference on Automated Reasoning
+    - TABLEAUX
 - ATP 和 ITP 的結合, tactics and Hammer
 - 接下來看論文主要的架構
 ## Motivation
@@ -35,7 +36,7 @@
 - 我會先介紹一下 Agda 會用到 equality definition 和 Agda 的證明方式，給不熟悉 Agda 的人，可以理解如何操作 Proof Object 的方式來證明。
 ## A Little Taste of Agda
 - 簡單介紹一下 Agda 的證明方式：
-會用到 5 個 definition，上面三個是 equality relation (Agda lib),下面三個是我們的前面例子定義的:
+會用到 6 個 definition，上面三個是 equality relation (Agda lib),下面三個是我們的前面例子定義的:
 - sym: 如果 x equal to y， 基於 symmetric rule 我可以得到 y equal to x
 - cong: 如果 x equal to y, 基於 congruence rule 我可以得到 fx equal to fy
 - trans: 如果 x equal to y 和 y equal to z, 基於 transtive rule 我可以得到 x equal to z.
@@ -71,7 +72,11 @@ trivial 就是我們想要證明的目標，一個 negative vector 加上 兩個
 - Factoring: We have redudant atom, so we remove redudant one
 - Replacement: we have l=r and A contain of l, and we replace l by r in A.
 - Equal Resolution: We have s=s and s/=s, so based on resolution, we got the empty.
-## VCC簡化版 到 VCC
+## VCC (Ground)
+- Resolution:
+- Factoring:
+- Superposition:
+- Eqaul Resolution:
 ## Vampire Core Calculus (VCC)
 這邊還是一般 Clause form。 (要避免被誤解成 Horn VCC)
 John Robinson 發明出一個 Resolution (Resolution rule and Factoring rule)，希望有一個像是 Hilbert System (many axioms 和 one inference rule)的自動化證明系統。 
@@ -123,7 +128,7 @@ step 6 : 對 negl 和 assoc 使用 superposition 來得到 step 6 的 theorem。
 ## Proof of Lemma 2
 這邊我們把 proposition 都轉換成 Agda 上的 type，基於 Propositions as Types and Proof as Program!!，那也可以把證明轉換成 Agda 上面的程式。
 這邊我就用 Factoring 和 Superpostion left rule，來解釋一下怎麼做轉換的。
-- FAC: 這邊 mgu(A, A')，可以來看 exmple 1 (step6)，因為 vampire 輸出的證明已經是經過 unification 之後的證明，所以我們就不用特別區分 A 或是 A'，可以把他們當作同一個 type 來看。
+- FAC: 這邊 mgu(A, A')，可以來看 exmple 1 (step6)，因為 vampire 輸出的證明已經是經過 unification 之後的證明，但是要轉到 Agda 上面來還是要再做 unifier 才可以讓 A 和 A' 變成同一個 type，而這也會是我 Thesis 要做的事情。
 - SUP.L: 同樣的經過 mgu(l, l')，也可以把 l 跟 l' 是作為同一個 type。 先對 sym (t_1 p) 得到type r = l， subst (sym (t_1 p)) a 這邊的 a 是type A[r] 得到type A[l]，...
 - 其他 rules 也可以基於 "Propositions as types" 和 "Proof as Program" 的方式來達成轉換。
 ## An example of applying Lemma 3
@@ -135,3 +140,5 @@ step 6 : 對 negl 和 assoc 使用 superposition 來得到 step 6 的 theorem。
 當然這邊的證明會有很多種形式，但是最終都能推導出一樣的結論。
 ## Thesis Proposal
 ...
+## Summary
+主要從 VCC (Classical) 介紹到 HVCC(Intuitionistic valid)
