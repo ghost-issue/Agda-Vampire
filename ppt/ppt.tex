@@ -137,6 +137,23 @@
 % when a letter follows directly.
 \newcommand{\vforall}{\makebox[\fontcharwd\font`x]{$\forall$}}
 \newcommand{\vto}{\makebox[2\fontcharwd\font`x]{$\to$}}
+% \colorinferrule{<colour>}{premises}{conclusion}: an \inferrule whose bar
+% alone is drawn in <colour>; premises, conclusion and any rules nested in
+% them keep the surrounding colour and mathpartir's normal bar.
+\makeatletter
+% mathpartir \setbox'es the rule, so the colour needs its own group
+\def\colorinferrule@fraction#1#2{\hbox{\color@begingroup
+  \advance\hsize by -0.5em
+  \let\mpr@fraction\mpr@@fraction \color{\colorinferrule@colour}%
+  $\displaystyle{{\color{colorinferrule@outer}#1}\mpr@over
+                 {\color{colorinferrule@outer}#2}}$\color@endgroup}}
+% No # in the body: mathpartir expands a premise's first token into a \def,
+% so this must also work as the first token of another rule's premise.
+\newcommand{\colorinferrule}[3]{\begingroup
+  \colorlet{colorinferrule@outer}{.}\def\colorinferrule@colour{#1}%
+  \let\mpr@fraction\colorinferrule@fraction
+  \inferrule{#2}{#3}\endgroup}
+\makeatother
 
 % --- SectionGenerator -------------------------------------------------------
 \newbool{skipsectionpage}
@@ -324,59 +341,49 @@ trivial u = trans (trans t1 t2) (neutl u)
 \begin{frame}{Vampire Core Calculus (Ground and Simplify version)}
     \begin{mathpar}
        \inferrule*[right=\textsc{Resolution}]{A \\ \neg A}{\bot} \and
-        \inferrule*[right=\textsc{Factoring}]{L \lor L}{L} \\
+        \inferrule*[right=\textsc{Factoring}]{A \lor A}{A} \\
         \inferrule*[right=\textsc{Replacement}]{l = r \\ L[l]}{L[r]}
         \inferrule*[right=\textsc{Eq.\ Resolution}]{s \neq s}{\bot}
     \end{mathpar}
     \vfill
-    {\footnotesize $A$ is atom. $L[l], L[r], L$ are literals. \\}
+    {\footnotesize $A$ is atom. $L[l], L[r]$ are literals. \\}
     {\footnotesize $l$, $r$, $s$ are terms. \\}
 \end{frame}
 
 \begin{frame}{Vampire Core Calculus (Ground)}
     \begin{mathpar}
        \inferrule*[right=\textsc{Resolution}]{A \lor C \\ \neg A \lor D}{C \lor D} \and
-        \inferrule*[right=\textsc{Factoring}]{L \lor L \lor C}{L \lor C} \\
+        \inferrule*[right=\textsc{Factoring}]{A \lor A \lor C}{A \lor C} \\
         \inferrule*[right=\textsc{Superposition}]{l = r \lor C \\ L[l] \lor D}{L[r] \lor C \lor D}
         \inferrule*[right=\textsc{Eq.\ Resolution}]{s \neq s \lor C}{C}
     \end{mathpar}
     \vfill
-    {\footnotesize $A$ is atom. $L[l], L[r], L$ are literals. \\}
+    {\footnotesize $A$ is atom. $L[l], L[r]$ are literals. \\}
     {\footnotesize $l$, $r$, $s$ are terms. \\}
 \end{frame}
 
 \begin{frame}{Resolution}
+    % Both bars the same length: the middle formula is padded to the premises'
+    % width, and fractions get no side padding.  The label is \rlap'd by hand
+    % so it does not shift the rule off centre (\inferrule* leaves a trailing
+    % space in its box).
+    \nulldelimiterspace=0pt
+    \newcommand{\respremises}{\inferrule{A \lor C}{\neg C \to A} \\ \inferrule{\neg A \lor D}{\neg D \to \neg A}}
     \begin{mathpar}
-        \inferrule*[right=\textsc{Res.}]
-          {\inferrule{A \lor C}{\neg A \to C} \\ \inferrule{\neg A \lor D}{A \to D}}
-          {C \lor D}
+        \colorinferrule{red}
+          {\respremises}
+          {\inferrule
+            {\mathmakebox[\widthof{$\inferrule{\respremises}{}$}]{(\neg C \land \neg D) \to (A \land \neg A)}}
+            {C \lor D}}\rlap{$\;\RightTirName{Res.}$}
     \end{mathpar}
     \vspace{0.5cm}
-    -% semantically
     \begin{itemize}
-        \item If $A$ is true, then $D$.
-        \item If $A$ is false, then $C$.
+        \item $(\neg C \land \neg D) \to \bot$
+        \item $\neg (\neg C \land \neg D)$ $\Longrightarrow$ $C \lor D$
     \end{itemize}
-    Either way, $C \lor D$ holds, right?
     \vfill
     {\footnotesize $A$ is atom. $C$, $D$ are Clauses. \\}
-\end{frame}
-
-\begin{frame}{Resolution produces an equisatisfiable clause}
-    \[
-    \renewcommand{\arraystretch}{1.3}
-    \begin{array}{ccc@{\qquad}c@{\qquad}c}
-        A & C & D & (A \lor C) \land (\neg A \lor D) & C \lor D \\ \hline
-        \Tt & \Tt & \Tt & \Tt & \Tt \\
-        \Tt & \Tt & \Ff & \boxed{\Ff} & \boxed{\Tt} \\
-        \Tt & \Ff & \Tt & \Tt & \Tt \\
-        \Tt & \Ff & \Ff & \Ff & \Ff \\
-        \Ff & \Tt & \Tt & \Tt & \Tt \\
-        \Ff & \Tt & \Ff & \Tt & \Tt \\
-        \Ff & \Ff & \Tt & \boxed{\Ff} & \boxed{\Tt} \\
-        \Ff & \Ff & \Ff & \Ff & \Ff
-    \end{array}
-    \]
+    {\footnotesize \textcolor{red}{Red line}: one-way inference; other lines are equivalences. \\}
 \end{frame}
 
 \begin{frame}{Equality Resolution}
@@ -397,54 +404,58 @@ trivial u = trans (trans t1 t2) (neutl u)
 \end{frame}
 
 \begin{frame}{Superposition}
+    \nulldelimiterspace=0pt
+    \newcommand{\supmid}{(\neg C \land \neg D) \to (l = r \land L[l])}
     \begin{mathpar}
-        \inferrule*[right=\textsc{SUP.}]{l = r \lor C \\ L[l] \lor D}{L[r] \lor C \lor D}
+        \colorinferrule{red}
+          {\inferrule{l = r \lor C}{\neg C \to l = r} \\ \inferrule{L[l] \lor D}{\neg D \to L[l]}}
+          {\colorinferrule{red}
+            {\supmid}
+            {\inferrule
+              {\mathmakebox[\widthof{$\displaystyle\supmid$}]{(\neg C \land \neg D) \to L[r]}}
+              {L[r] \lor C \lor D}}\rlap{$\;\RightTirName{Sup.}$}}
     \end{mathpar}
     \vspace{0.1cm}
-    -% semantically
-    \begin{center}
-        Because $l = r$ is true and $L[l]$. \\[0.5em]
-        $C \land (L[r] \lor D)$ \\[0.5em]
-        $(C \land L[r]) \lor (C \land D)$
-    \end{center}
-    \vspace{0.3cm}
-    \begin{itemize}
-        \item If $C$ is true, then $L[r] \lor D$.
-        \item If $C$ is false, then formulae is false.
-    \end{itemize}
-    Either way, $L[r] \lor C \lor D$ holds.
+    \vfill
+    {\footnotesize $L[l], L[r]$ are literals. $C, D$ are Clauses. \\}
+    {\footnotesize $l$, $r$ are terms. \\}
+    {\footnotesize \textcolor{red}{Red line}: one-way inference; other lines are equivalences. \\}
 \end{frame}
 
 \begin{frame}{Vampire Core Calculus (Nonground)}
     \begin{mathpar}
         \inferrule*[right=\textsc{Resolution}]{A \lor C \\ \neg A' \lor D}{\sigma(C \lor D)} \and
-        \inferrule*[right=\textsc{Factoring}]{L \lor L' \lor C}{\sigma(L \lor C)} \\
+        \inferrule*[right=\textsc{Factoring}]{A \lor A' \lor C}{\sigma(A \lor C)} \\
         \inferrule*[right=\textsc{Superposition}]{l = r \lor C \\ L[l'] \lor D}{\sigma(L[r] \lor C \lor D)}
         \inferrule*[right=\textsc{Eq.\ Resolution}]{s \neq t \lor C}{\sigma(C)}
     \end{mathpar}
     \vfill
     {\footnotesize $\sigma : \textit{Var} \rightarrow \textit{Term}$\\ }
-    {\footnotesize $\mathsf{mgu}(A, A')$ in Resolution. $\mathsf{mgu}(L, L')$ in Factoring. \\}
+    {\footnotesize $\mathsf{mgu}(A, A')$ in Resolution and Factoring. \\}
     {\footnotesize $\mathsf{mgu}(l, l')$ in Superposition. \\}
     {\footnotesize $\mathsf{mgu}(s, t)$ in Equality Resolution. \\}
-    {\footnotesize $A$ is atom. $L[l'], L[r], L$ are literals. \\}
+    {\footnotesize $A$ is atom. $L[l'], L[r]$ are literals. \\}
     {\footnotesize $C$, $D$ are clauses. \\}
     {\footnotesize $l$, $l'$, $r$, $s$, $t$ are terms. \\}
 \end{frame}
 
 \begin{frame}{Resolution (Nonground)}
+    % As on the Resolution slide.  The middle formula is the widest line, so
+    % both long bars match without padding.
+    \nulldelimiterspace=0pt
     \begin{mathpar}
-        \inferrule*[right=\textsc{Res.}]
-          {\inferrule{\inferrule{A \lor C}{\sigma(\neg A \to C)}}{\neg\sigma(A) \to \sigma(C)} \\ \inferrule{\inferrule{\neg A' \lor D}{\sigma(A' \to D)}}{\sigma(A') \to \sigma(D)}}
-          {\sigma(C \lor D)}
+        \colorinferrule{red}
+          {\inferrule{\inferrule{A \lor C}{\sigma(A) \lor \sigma(C)}}{\neg\sigma(C) \to \sigma(A)} \\ \inferrule{\inferrule{\neg A' \lor D}{\neg\sigma(A') \lor \sigma(D)}}{\neg\sigma(D) \to \neg\sigma(A')}}
+          {\inferrule
+            {(\neg\sigma(C) \land \neg\sigma(D)) \to (\sigma(A) \land \neg\sigma(A'))}
+            {\sigma(C \lor D)}}\rlap{$\;\RightTirName{Res.}$}
     \end{mathpar}
     \vspace{0.5cm}
     %- Semantically existential quantification, eliminating existential quantifiers.
     \begin{itemize}
-        \item If $\sigma(A')$ is true, then $\sigma(D)$.
-        \item If $\sigma(A)$ is false, then $\sigma(C)$.
+        \item $(\neg \sigma(C) \land \neg \sigma(D)) \to \bot$
+        \item $\neg (\neg \sigma(C) \land \neg \sigma(D))$ $\Longrightarrow$ $\sigma(C \lor D)$
     \end{itemize}
-    Either way, $\sigma(C) \lor \sigma(D)$ holds, $\sigma(C \lor D)$ also holds.
     \vfill
     {\footnotesize $A$ is atom. $C$, $D$ are Clauses. \\}
     {\footnotesize $\sigma = mgu(A, A')$, $\sigma(A) = \sigma(A')$ \\}
@@ -462,21 +473,19 @@ trivial u = trans (trans t1 t2) (neutl u)
 \end{frame}
 
 \begin{frame}{Superposition (Nonground)}
+    % As on the Superposition slide: the first middle formula is the widest
+    % line, so the second one is padded to its width.
+    \nulldelimiterspace=0pt
+    \newcommand{\supngmid}{(\neg\sigma(C) \land \neg\sigma(D)) \to (\sigma(l = r) \land \sigma(L[l']))}
     \begin{mathpar}
-        \inferrule*[right=\textsc{SUP.}]{\inferrule{l = r \lor C}{\sigma(l = r) \lor \sigma(C)} \\ \inferrule{L[l'] \lor D}{\sigma(L[l']) \lor \sigma(D)}}{\sigma(L[r] \lor C \lor D)}
+        \colorinferrule{red}
+          {\inferrule{\inferrule{l = r \lor C}{\sigma(l = r) \lor \sigma(C)}}{\neg\sigma(C) \to \sigma(l = r)} \\ \inferrule{\inferrule{L[l'] \lor D}{\sigma(L[l']) \lor \sigma(D)}}{\neg\sigma(D) \to \sigma(L[l'])}}
+          {\colorinferrule{red}
+            {\supngmid}
+            {\inferrule
+              {\mathmakebox[\widthof{$\displaystyle\supngmid$}]{(\neg\sigma(C) \land \neg\sigma(D)) \to \sigma(L[r])}}
+              {\sigma(L[r] \lor C \lor D)}}\rlap{$\;\RightTirName{Sup.}$}}
     \end{mathpar}
-    \vspace{0.1cm}
-    \begin{center}
-        Because $\sigma(l) = \sigma(r)$ is true and $\sigma(L[\sigma(l')])$. \\[0.5em]
-        $\sigma(C) \land (\sigma(L[r]) \lor \sigma(D))$ \\[0.5em]
-        $(\sigma(C) \land \sigma(L[r])) \lor (\sigma(C) \land \sigma(D))$
-    \end{center}
-    \vspace{0.1cm}
-    \begin{itemize}
-        \item If $\sigma(C)$ is true, then $\sigma(L[r]) \lor \sigma(D)$.
-        \item If $\sigma(C)$ is false, then formulae is false.
-    \end{itemize}
-    Either way, $\sigma(L[r]) \lor \sigma(C) \lor \sigma(D)$ holds.
     \vfill
     {\footnotesize $\sigma = mgu(l, l')$, $\sigma(l) = \sigma(l')$;\; $\sigma(L[l']) = \sigma(L[\sigma(l')])$ \\}
 \end{frame}
@@ -593,7 +602,7 @@ trivial u = trans (trans t1 t2) (neutl u)
         \end{mathpar}
         \vspace{2pt}
         \begin{mathpar}
-          \inferrule*[right=\textsc{Fac.}]{L \lor L' \lor C}{\sigma(L \lor C)}
+          \inferrule*[right=\textsc{Fac.}]{A \lor A' \lor C}{\sigma(A \lor C)}
         \end{mathpar}
         \vspace{2pt}
         \begin{mathpar}
@@ -624,8 +633,8 @@ trivial u = trans (trans t1 t2) (neutl u)
       \end{column}
     \end{columns}
     \vfill
-    {\footnotesize $P$, $Q$ = premises;\; $A$, $B$ = atoms;\; $C$, $D$ = clauses;\; $L[l']$, $L[r], L$ = literals;\; \\
-     $\mathsf{mgu}(A,A')$, $\mathsf{mgu}(L, L')$, $\mathsf{mgu}(l,l')$, $\mathsf{mgu}(s,t)$ \\ }
+    {\footnotesize $P$, $Q$ = premises;\; $A$, $B$ = atoms;\; $C$, $D$ = clauses;\; $L[l']$, $L[r]$ = literals;\; \\
+     $\mathsf{mgu}(A,A')$, $\mathsf{mgu}(l,l')$, $\mathsf{mgu}(s,t)$ \\ }
     {\footnotesize $\boxed{}$ = positive atom. \\}
     {\footnotesize $\neg P = \neg(A_1 \land A_2 \land \cdots)$, $C = \neg A_1 \lor \neg A_2 \lor \cdots$ (Horn and De Morgan) \\}
 \end{frame}
