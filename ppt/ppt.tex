@@ -220,8 +220,8 @@
       \hline
     \end{tabular}
     \vfill
-    Vampire, as the one of state-of-the-art ATP, has been under development for nearly 35 years. \\
-    Since 1999, Vampire won 78 titles in CASC.  \\
+    Vampire, as one of state-of-the-art ATP, has been under development for nearly 35 years. \\
+    Since 1999, Vampire has won 78 titles in CASC.  \\
     Vampire won all competitions in 2025 and 2026!!
 \end{frame}
 
@@ -338,7 +338,7 @@ trivial u = trans (trans t1 t2) (neutl u)
 %-        \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{img/vampire.png}
 %-    \end{center}
 %-\end{frame}
-\begin{frame}{Vampire Core Calculus (Ground and Simplify version)}
+\begin{frame}{Vampire Core Calculus (Simplified Ground Version)}
     \begin{mathpar}
        \inferrule*[right=\textsc{Resolution}]{A \\ \neg A}{\bot} \and
         \inferrule*[right=\textsc{Factoring}]{A \lor A}{A} \\
@@ -404,6 +404,7 @@ trivial u = trans (trans t1 t2) (neutl u)
     \vfill
     {\footnotesize $C$ is Clause. \\}
     {\footnotesize $s$ is term. \\}
+    {\footnotesize \textcolor{red}{Red line}: one-way inference; other lines are equivalences. \\}
 \end{frame}
 
 \begin{frame}{Superposition}
@@ -447,7 +448,7 @@ trivial u = trans (trans t1 t2) (neutl u)
     % both long bars match without padding.
     \nulldelimiterspace=0pt
     \begin{mathpar}
-        \colorinferrule{red}
+        \inferrule
           {\inferrule{\inferrule{A \lor C}{\sigma(A) \lor \sigma(C)}}{\neg\sigma(C) \to \sigma(A)} \\ \inferrule{\inferrule{\neg A' \lor D}{\neg\sigma(A') \lor \sigma(D)}}{\neg\sigma(D) \to \neg\sigma(A')}}
           {\inferrule
             {(\neg\sigma(C) \land \neg\sigma(D)) \to (\sigma(A) \land \neg\sigma(A'))}
@@ -461,7 +462,7 @@ trivial u = trans (trans t1 t2) (neutl u)
     \end{itemize}
     \vfill
     {\footnotesize $A$ is atom. $C$, $D$ are Clauses. \\}
-    {\footnotesize $\sigma = mgu(A, A')$, $\sigma(A) = \sigma(A')$ \\}
+    {\footnotesize $\sigma = \mathsf{mgu}(A, A')$, $\sigma(A) = \sigma(A')$ \\}
 \end{frame}
 
 \begin{frame}{Equality Resolution (Nonground)}
@@ -473,16 +474,16 @@ trivial u = trans (trans t1 t2) (neutl u)
     \end{mathpar}
     \vspace{0.5cm}
     \begin{mathpar}
-        \colorinferrule{red}
+        \inferrule
           {\inferrule{\sigma(s) = \sigma(t)}{\top \to \sigma(s) = \sigma(t)} \\ \inferrule{\sigma(s) \neq \sigma(t) \lor \sigma(C)}{\neg\sigma(C) \to \sigma(s) \neq \sigma(t)}}
           {\inferrule
             {(\top \land \neg\sigma(C)) \to (\sigma(s) = \sigma(t) \land \sigma(s) \neq \sigma(t))}
             {\sigma(C)}\rlap{$\;\RightTirName{Eq.Res.}$}}
     \end{mathpar}
     \vfill
-    {\footnotesize $C$, $D$ are Clauses. \\}
+    {\footnotesize $C$ is Clause. \\}
     {\footnotesize $s$, $t$ are terms. \\}
-    {\footnotesize $\sigma = mgu(s, t)$, $\sigma(s) = \sigma(t)$ \\}
+    {\footnotesize $\sigma = \mathsf{mgu}(s, t)$, $\sigma(s) = \sigma(t)$ \\}
 \end{frame}
 
 \begin{frame}{Superposition (Nonground)}
@@ -491,16 +492,16 @@ trivial u = trans (trans t1 t2) (neutl u)
     \nulldelimiterspace=0pt
     \newcommand{\supngmid}{(\neg\sigma(C) \land \neg\sigma(D)) \to (\sigma(l = r) \land \sigma(L[l']))}
     \begin{mathpar}
-        \colorinferrule{red}
+        \inferrule
           {\inferrule{\inferrule{l = r \lor C}{\sigma(l = r) \lor \sigma(C)}}{\neg\sigma(C) \to \sigma(l = r)} \\ \inferrule{\inferrule{L[l'] \lor D}{\sigma(L[l']) \lor \sigma(D)}}{\neg\sigma(D) \to \sigma(L[l'])}}
-          {\colorinferrule{red}
+          {\inferrule
             {\supngmid}
             {\inferrule
               {\mathmakebox[\widthof{$\displaystyle\supngmid$}]{(\neg\sigma(C) \land \neg\sigma(D)) \to \sigma(L[r])}}
               {\sigma(L[r] \lor C \lor D)}}\rlap{$\;\RightTirName{Sup.}$}}
     \end{mathpar}
     \vfill
-    {\footnotesize $\sigma = mgu(l, l')$, $\sigma(l) = \sigma(l')$;\; $\sigma(L[l']) = \sigma(L[\sigma(l')])$ \\}
+    {\footnotesize $\sigma = \mathsf{mgu}(l, l')$, $\sigma(l) = \sigma(l')$;\; $\sigma(L[l']) = \sigma(L[\sigma(l')])$ \\}
 \end{frame}
 
 %-\begin{frame}{Superposition derived from Resolution}
@@ -596,7 +597,7 @@ trivial u = trans (trans t1 t2) (neutl u)
 \begin{frame}{Lemmas}
     \begin{itemize}
         \item Lemma 1: For every VCC rule, if its premises are Horn, then its conclusion is also Horn. \\
-        (Translate Horn Clause to Horn Implication.)
+        (Translate Horn Clauses to Horn Implications.)
         \item Lemma 2: Horn Vampire Core Calculus (HVCC) is intuitionistically valid. \\
         \item Lemma 3: Let $\Gamma$ be definite clauses and \textbf{$G$ be a ground atom.}
         If $\Gamma, G \rightarrow \bot \vdash \bot$ is derivable in HVCC, then $\Gamma, G \rightarrow G \vdash G$ is also derivable in HVCC.
@@ -732,7 +733,7 @@ trivial u = trans (trans t1 t2) (neutl u)
         \end{mathpar}
         \vspace{1.5pt}
         \begin{mathpar}
-          \inferrule*[right=\textsc{Eq.Res.}]{t : s = s \land P \to A}{(\lambda p.\; t\; \mathsf{refl}\; p) : P \to A}
+          \inferrule*[right=\textsc{Eq.Res.}]{t : s = s \land P \to A}{(\lambda p.\; t\; (\mathsf{refl}\; p)) : P \to A}
         \end{mathpar}
         \begin{mathpar}
           \inferrule*[right=\textsc{Sup.L}]{t_1 : P \to l = r \quad t_2 : A[l] \land Q \to B}{(\lambda (p,a,q).\; t_2\; ((\mathsf{subst}\; (\mathsf{sym}\; (t_1\; p))\; a), q)) \\\\ : P \land A[r] \land Q \to B}
@@ -807,8 +808,8 @@ trivial u = trans (trans t1 t2) (neutl u)
     \begin{itemize}
         \item Artjoms Šinkarovs and Michael Rawson. ``When Agda met Vampire.''
         \item Laura Kovács and Andrei Voronkov.  ``Vampire Guide Lectures.''
-        \item Giles Reger. ``The Vampire Journey. (Youtube)''
-        \item Alan J.A. Robinson, Andrei Voronkov. ``Paramodulation-Based Theorem Proving''
+        \item Giles Reger. ``The Vampire Journey. (YouTube)''
+        \item Robert Nieuwenhuis, Albert Rubio. ``Paramodulation-Based Theorem Proving''
     \end{itemize}
 \end{frame}
 
