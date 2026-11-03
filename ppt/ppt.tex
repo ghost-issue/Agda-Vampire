@@ -639,7 +639,7 @@ trivial u = trans (trans t1 t2) (neutl u)
           \inferrule*[right=\textsc{Eq.Res.}]{s \neq t \lor \neg P \lor \boxed{A}}{\sigma(\neg P \lor \boxed{A})}
         \end{mathpar}
         \begin{mathpar}
-          \inferrule*[right=\textsc{Sup.L}]{\neg P \lor l = r \quad \neg A[l'] \lor \neg Q \lor \boxed{B}}{\sigma(\neg P \lor \neg A[r] \lor \neg Q \lor \boxed{B})}
+          \inferrule*[right=\textsc{Sup.L}]{\neg P \lor l = r \quad \neg A[l'] \lor \neg Q \lor \boxed{B}}{\sigma(\neg A[r] \lor \neg P \lor \neg Q \lor \boxed{B})}
         \end{mathpar}
         \begin{mathpar}
           \inferrule*[right=\textsc{Sup.R}]{\neg P \lor l = r \quad \neg Q \lor \boxed{A[l']}}{\sigma(\neg P \lor \neg Q \lor \boxed{A[r]})}
@@ -668,7 +668,7 @@ trivial u = trans (trans t1 t2) (neutl u)
           \inferrule*[right=\textsc{Eq.Res.}]{s \neq t \lor \neg P \lor \boxed{A}}{\sigma(\neg P \lor \boxed{A})}
         \end{mathpar}
         \begin{mathpar}
-          \inferrule*[right=\textsc{Sup.L}]{\neg P \lor l = r \quad \neg A[l'] \lor \neg Q \lor \boxed{B}}{\sigma(\neg P \lor \neg A[r] \lor \neg Q \lor \boxed{B})}
+          \inferrule*[right=\textsc{Sup.L}]{\neg P \lor l = r \quad \neg A[l'] \lor \neg Q \lor \boxed{B}}{\sigma(\neg A[r] \lor \neg P \lor \neg Q \lor \boxed{B})}
         \end{mathpar}
         \begin{mathpar}
           \inferrule*[right=\textsc{Sup.R}]{\neg P \lor l = r \quad \neg Q \lor \boxed{A[l']}}{\sigma(\neg P \lor \neg Q \lor \boxed{A[r]})}
@@ -686,7 +686,7 @@ trivial u = trans (trans t1 t2) (neutl u)
           \inferrule*[right=\textsc{Eq.Res.}]{s = t \land P \to \boxed{A}}{\sigma(P \to \boxed{A})}
         \end{mathpar}
         \begin{mathpar}
-          \inferrule*[right=\textsc{Sup.L}]{P \to l = r \quad A[l'] \land Q \to \boxed{B}}{\sigma(P \land A[r] \land Q \to \boxed{B})}
+          \inferrule*[right=\textsc{Sup.L}]{P \to l = r \quad A[l'] \land Q \to \boxed{B}}{\sigma(A[r] \land P \land Q \to \boxed{B})}
         \end{mathpar}
         \begin{mathpar}
           \inferrule*[right=\textsc{Sup.R}]{P \to l = r \quad Q \to \boxed{A[l']}}{\sigma(P \land Q \to \boxed{A[r]})}
@@ -716,7 +716,7 @@ trivial u = trans (trans t1 t2) (neutl u)
           \inferrule*[right=\textsc{Eq.Res.}]{s = t \land P \to \boxed{A}}{\sigma(P \to \boxed{A})}
         \end{mathpar}
         \begin{mathpar}
-          \inferrule*[right=\textsc{Sup.L}]{P \to l = r \quad A[l'] \land Q \to \boxed{B}}{\sigma(P \land A[r] \land Q \to \boxed{B})}
+          \inferrule*[right=\textsc{Sup.L}]{P \to l = r \quad A[l'] \land Q \to \boxed{B}}{\sigma(A[r] \land P \land Q \to \boxed{B})}
         \end{mathpar}
         \begin{mathpar}
           \inferrule*[right=\textsc{Sup.R}]{P \to l = r \quad Q \to \boxed{A[l']}}{\sigma(P \land Q \to \boxed{A[r]})}
@@ -736,7 +736,7 @@ trivial u = trans (trans t1 t2) (neutl u)
           \inferrule*[right=\textsc{Eq.Res.}]{t : s = s \land P \to A}{(\lambda p.\; t\; (\mathsf{refl}\; p)) : P \to A}
         \end{mathpar}
         \begin{mathpar}
-          \inferrule*[right=\textsc{Sup.L}]{t_1 : P \to l = r \quad t_2 : A[l] \land Q \to B}{(\lambda (p,a,q).\; t_2\; ((\mathsf{subst}\; (\mathsf{sym}\; (t_1\; p))\; a), q)) \\\\ : P \land A[r] \land Q \to B}
+          \inferrule*[right=\textsc{Sup.L}]{t_1 : P \to l = r \quad t_2 : A[l] \land Q \to B}{(\lambda (a,p,q).\; t_2\; ((\mathsf{subst}\; (\mathsf{sym}\; (t_1\; p))\; a), q)) \\\\ : A[r] \land P \land Q \to B}
         \end{mathpar}
         \begin{mathpar}
           \inferrule*[right=\textsc{Sup.R}]{t_1 : P \to l = r \quad t_2 : Q \to A[l]}{(\lambda (p,q).\; \mathsf{subst}\; (t_1\; p)\; (t_2\; q)) : P \land Q \to A[r]}
